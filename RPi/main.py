@@ -19,10 +19,6 @@ millis = lambda: int(round(time.time() * 1000))
 # Setup for GPIO 22 CE and CE0 CSN with SPI Speed @ 8Mhz
 radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ)
 
-if __name__ == "__main__":
-    main()
-
-
 def main():
 
 	print("RFAccel 0.1")
@@ -55,3 +51,7 @@ def main():
 		response = radio.read(length)
 
 		print("Received " + str(length) + " bytes")
+
+
+if __name__ == "__main__":
+	main()
