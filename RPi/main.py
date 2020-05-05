@@ -34,7 +34,7 @@ def main():
 	radio.openReadingPipe(1, pipes[1])
 
 	radio.stopListening()
-	radio.write(bytes([cmd, cmd_start])
+	radio.write(bytes([cmd, cmd_start]))
 
 	radio.startListening()
 
