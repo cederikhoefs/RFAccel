@@ -9,7 +9,7 @@ irq_gpio_pin = None
 
 millis = lambda: int(round(time.time() * 1000))
 
-retries = 1
+retries = 15
 retry_delay = 4
 
 
@@ -40,7 +40,7 @@ def main():
 	radio.stopListening()
 
 	for i in range(10):
-		radio.write(bytes([cmd, cmd_start]))
+		print(str(i) + " returns " + str(radio.write(bytes([cmd, cmd_start]))))
 	"""
 	radio.startListening()
 
