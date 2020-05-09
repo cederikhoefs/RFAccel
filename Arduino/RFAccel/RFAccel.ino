@@ -18,11 +18,12 @@ void setup()
 {
 
   Serial.begin(115200);
-
+  Serial.println("RFAccel");
+  
   radio.begin();
 
 
-  //radio.enableDynamicPayloads();
+  radio.enableDynamicPayloads();
   radio.setRetries(retry_delay, retries);
 
   radio.openWritingPipe(TX_pipe);
@@ -46,15 +47,6 @@ void loop()
       Serial.print(F("Got packet of "));
       Serial.print(len);
       Serial.println(" bytes");
-
-      radio.stopListening();
-
-      radio.write(Buffer, len );
-      Serial.println(F("Sent response."));
-
-      radio.startListening();
-    }
-  
   
 }
 
