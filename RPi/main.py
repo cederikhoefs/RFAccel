@@ -9,6 +9,8 @@ irq_gpio_pin = None
 
 millis = lambda: int(round(time.time() * 1000))
 
+retries = 1
+retry_delay = 4
 
 
 ########### USER CONFIGURATION ###########
@@ -17,24 +19,28 @@ millis = lambda: int(round(time.time() * 1000))
 # CE Pin, CSN Pin, SPI Speed
 
 # Setup for GPIO 22 CE and CE0 CSN with SPI Speed @ 8Mhz
-radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ)
 
 def main():
 
 	print("RFAccel 0.1")
 
-	pipes = [0xF0F0F0F0E1, 0xF0F0F0F0D2]
+	radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ)
+
+	TX_pipe = 0xF0F0F0F0D2
+	RX_pipe = 0xF0F0F0F0E1
 
 	radio.begin()
 	radio.enableDynamicPayloads()
-	radio.setRetries(5, 15)
+	radio.setRetries(retry_delay, retries)
 	radio.printDetails()
 
-	radio.openWritingPipe(pipes[0])
-	radio.openReadingPipe(1, pipes[1])
+	radio.openWritingPipe(TX_pipe)
+	radio.openReadingPipe(1, RX_pipe)
 
 	radio.stopListening()
-	radio.write(bytes([cmd, cmd_start]))
+
+	for i in range(10):
+		radio.write(bytes([cmd, cmd_start]))
 
 	radio.startListening()
 
