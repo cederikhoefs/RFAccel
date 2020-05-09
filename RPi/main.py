@@ -21,11 +21,11 @@ class RFAccelShell(cmd.Cmd):
 
 	def do_init(self, arg):
 		'Initialize rfaccel'
-		init()
+		self.init()
 
 	def do_info(self, arg):
 		'Print radio details'
-		radio.printDetails()
+		self.radio.printDetails()
 
 	def do_connect(self, arg):
 		'Connect to remote device'
@@ -55,19 +55,19 @@ class RFAccelShell(cmd.Cmd):
 	def init(self):
 
 	 	#Setup for GPIO 22 CE and CE0 CSN with SPI Speed @ 8Mhz
-		radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ)
+		self.radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ)
 
-		TX_pipe = 0xF0F0F0F0D2
-		RX_pipe = 0xF0F0F0F0E1
+		self.TX_pipe = 0xF0F0F0F0D2
+		self.RX_pipe = 0xF0F0F0F0E1
 
-		radio.begin()
-		radio.enableDynamicPayloads()
-		radio.setRetries(retry_delay, retries)
+		self.radio.begin()
+		self.radio.enableDynamicPayloads()
+		self.radio.setRetries(retry_delay, retries)
 		
-		radio.openWritingPipe(TX_pipe)
-		radio.openReadingPipe(1, RX_pipe)
+		self.radio.openWritingPipe(TX_pipe)
+		self.radio.openReadingPipe(1, RX_pipe)
 
-		radio.stopListening()
+		self.radio.stopListening()
 
 if __name__ == "__main__":
 	RFAccelShell().cmdloop()
