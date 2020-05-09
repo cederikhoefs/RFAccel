@@ -41,7 +41,7 @@ def main():
 
 	for i in range(10):
 		radio.write(bytes([cmd, cmd_start]))
-
+	"""
 	radio.startListening()
 
 	wait_start = millis()
@@ -57,7 +57,7 @@ def main():
 		response = radio.read(length)
 
 		print("Received " + str(length) + " bytes")
-
+	"""
 
 if __name__ == "__main__":
 	main()
