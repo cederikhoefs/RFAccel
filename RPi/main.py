@@ -30,7 +30,7 @@ def main():
 	RX_pipe = 0xF0F0F0F0E1
 
 	radio.begin()
-	radio.enableDynamicPayloads()
+	#radio.enableDynamicPayloads()
 	radio.setRetries(retry_delay, retries)
 	radio.printDetails()
 

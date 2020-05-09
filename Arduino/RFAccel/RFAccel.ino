@@ -22,7 +22,7 @@ void setup()
   radio.begin();
 
 
-  radio.enableDynamicPayloads();
+  //radio.enableDynamicPayloads();
   radio.setRetries(retry_delay, retries);
 
   radio.openWritingPipe(TX_pipe);
