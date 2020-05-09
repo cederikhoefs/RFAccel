@@ -62,10 +62,10 @@ class RFAccelShell(cmd.Cmd):
 
 		self.radio.begin()
 		self.radio.enableDynamicPayloads()
-		self.radio.setRetries(retry_delay, retries)
+		self.radio.setRetries(self.retry_delay, self.retries)
 		
-		self.radio.openWritingPipe(TX_pipe)
-		self.radio.openReadingPipe(1, RX_pipe)
+		self.radio.openWritingPipe(self.TX_pipe)
+		self.radio.openReadingPipe(1, self.RX_pipe)
 
 		self.radio.stopListening()
 
