@@ -12,7 +12,7 @@ const uint64_t enumerate_pipe_out = 0x656E756D49;
 const uint8_t retries = 15;
 const uint8_t retry_delay = 5; //1.5 ms
 
-uint32_t Buffer[32];
+uint8_t Buffer[32];
 
 void setup()
 {
@@ -51,6 +51,14 @@ void loop()
       Serial.print(F("Got packet of "));
       Serial.print(len);
       Serial.println(" bytes");
+      
+      for(int i = 0; i < len; i++){
+        Serial.print((int)Buffer[i], HEX);
+        Serial.print(";");
+      }
+      radio.stopListening();
+      radio.write("Hello", 6);
+      radio.startListening();
     }
 }
 
