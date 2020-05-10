@@ -100,7 +100,7 @@ class RFAccelShell(cmd.Cmd):
 	def enumerate(self):
 		if (self.mode == RFAccel.mode_enum):
 
-			self.radio.write(bytes([RFAccel.type_cmd, RFAccel.cmd_enumerate]))
+			print(self.radio.write(bytes([RFAccel.type_cmd, RFAccel.cmd_enumerate])))
 
 			self.radio.startListening()
 
