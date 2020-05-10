@@ -102,7 +102,7 @@ class RFAccelShell(cmd.Cmd):
 		if (self.mode == RFAccel.mode_enum):
 
 			self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_enumerate]))
-			#self.radio.write(bytes("Hello"))
+
 			self.radio.startListening()
 
 			wait_start = millis()

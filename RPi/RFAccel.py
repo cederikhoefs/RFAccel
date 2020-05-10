@@ -1,7 +1,6 @@
 type_cmd =    0x00
-type_ack =    0x01
-type_data =   0x02
-type_stream = 0x03
+type_data =   0x01
+type_stream = 0x02
 
 
 cmd_enumerate = 0x0E				#Sent on 'enumerate' channel for device discovery

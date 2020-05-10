@@ -2,6 +2,8 @@
 #include "nRF24L01.h"
 #include "RF24.h"
 
+//#define VERBOSE
+
 
 RF24 radio(7,8);
 
@@ -11,6 +13,24 @@ const uint64_t enumerate_pipe_out = 0x656E756D49;
 
 const uint8_t retries = 15;
 const uint8_t retry_delay = 5; //1.5 ms
+
+const uint8_t type_cmd = 0x00;
+const uint8_t type_data = 0x01;
+const uint8_t type_stream = 0x02;
+
+const uint8_t cmd_enumerate = 0x0E;				
+const uint8_t cmd_start = 0x0A;		
+const uint8_t cmd_end = 0x0F;				
+const uint8_t cmd_close_stream = 0x0C;		
+
+const uint8_t cmd_set_acc_rate = 0x02;
+const uint8_t cmd_set_gyr_rate = 0x03;
+const uint8_t cmd_set_acc_range = 0x04;
+const uint8_t cmd_set_gyr_range = 0x05;
+const uint8_t cmd_get_acc = 0x06;
+const uint8_t cmd_get_gyr = 0x07;
+const uint8_t cmd_stream_accel = 0x08;
+const uint8_t cmd_stream_gyro = 0x09;
 
 uint8_t Buffer[32];
 
@@ -22,7 +42,7 @@ void setup()
   
   radio.begin();
 
-  radio.setAutoAck(false);
+  radio.setAutoAck(true);
   radio.setDataRate(RF24_2MBPS);
   radio.enableDynamicPayloads();
   radio.setRetries(retry_delay, retries);
@@ -47,6 +67,8 @@ void loop()
       uint8_t len = radio.getDynamicPayloadSize();
 
       radio.read( Buffer, len );
+      
+      #ifdef VERBOSE
 
       Serial.print(F("Got packet of "));
       Serial.print(len);
@@ -56,9 +78,40 @@ void loop()
         Serial.print((int)Buffer[i], HEX);
         Serial.print(";");
       }
-      radio.stopListening();
-      radio.write("Hello", 6);
-      radio.startListening();
+      Buffer[len] = 0;
+      Serial.println((char*)Buffer);
+      
+      #endif
+      
+      if(len < 2){
+        continue;
+      }
+      
+      switch(Buffer[0]){
+
+		case type_cmd:
+
+			switch(Buffer[1]){
+
+				case cmd_enumerate:
+                                         
+                                        Serial.println("Enumeration requested!");
+					      
+					radio.stopListening();
+					radio.write("Hello", 6);
+					radio.startListening();
+					break;
+				default:
+					break;
+			}
+
+			break;
+          
+        default:
+        	break;
+        
+      }
+
     }
 }
 
