@@ -42,7 +42,7 @@ class RFAccelShell(cmd.Cmd):
 			if (not (self.mode == RFAccel.mode_conn)):
 				self.enum_mode()
 				self.enumerate()			
-				print(devices)
+				print(self.remotes)
 			else:
 				print("Still in connection.")
 		else:
