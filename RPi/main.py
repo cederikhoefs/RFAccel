@@ -12,7 +12,7 @@ class RFAccelShell(cmd.Cmd):
 	intro = "rfaccel 0.1 shell.   Type help or ? to list commands.\n"
 	prompt = "(rfaccel)"
 	radio = None
-	mode = mode_idle
+	mode = RFAccel.mode_idle
 
 
 	retries = 15
@@ -30,13 +30,13 @@ class RFAccelShell(cmd.Cmd):
 
 	def do_info(self, arg):
 		'Print radio details'
-		if(radio):
+		if(self.radio):
 			self.radio.printDetails()
 
 	def do_enumerate(self, arg):
 		'Get available devices'
 
-		if(not (self.mode == RFAccel.mode_conn):
+		if(not (self.mode == RFAccel.mode_conn)):
 			self.mode = RFAccel.mode_enum
 			self.enumerate()			
 		else:
@@ -80,8 +80,8 @@ class RFAccelShell(cmd.Cmd):
 		self.radio.enableDynamicPayloads()
 		self.radio.setRetries(self.retry_delay, self.retries)
 
-		self.radio.setDataRate(NRF24.BR_2MBPS)
-		self.radio.setPALevel(NRF24.PA_MIN)
+		self.radio.setDataRate(RF24_2MBPS)
+		self.radio.setPALevel(RF24_PA_MAX)
 		
 		self.enum_mode()
 
@@ -91,8 +91,8 @@ class RFAccelShell(cmd.Cmd):
 		self.radio.stopListening()
 		self.radio.setChannel(RFAccel.enumerate_channel)
 
-		self.radio.openWritingPipe(default_enum_pipe_out)
-		self.radio.openReadingPipe(1, default_enum_pipe_in)
+		self.radio.openWritingPipe(RFAccel.enum_pipe_out)
+		self.radio.openReadingPipe(1, RFAccel.enum_pipe_in)
 
 	def enumerate(self):
 		if(self.mode == RFAccel.mode_enum):
