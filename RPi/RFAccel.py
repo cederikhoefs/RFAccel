@@ -2,7 +2,6 @@ type_cmd =    0x00
 type_data =   0x01
 type_stream = 0x02
 
-
 cmd_enumerate = 0x0E				#Sent on 'enumerate' channel for device discovery
 cmd_start = 0x0A					#Starts a connection between RPi and Arduino on specified radio channel
 cmd_end = 0x0F						#Ends the connection, lets the arduino return to the enumerate channel
@@ -16,6 +15,8 @@ cmd_get_acc = 0x06
 cmd_get_gyr = 0x07
 cmd_stream_accel = 0x08
 cmd_stream_gyro = 0x09
+
+data_enumerate = 0x0E
 
 enumerate_channel = 0
 

@@ -7,6 +7,7 @@
 
 RF24 radio(7,8);
 
+
 const uint8_t  enumerate_channel = 0;
 const uint64_t enumerate_pipe_in = 0x656E756D4F;
 const uint64_t enumerate_pipe_out = 0x656E756D49;
@@ -31,6 +32,19 @@ const uint8_t cmd_get_acc = 0x06;
 const uint8_t cmd_get_gyr = 0x07;
 const uint8_t cmd_stream_accel = 0x08;
 const uint8_t cmd_stream_gyro = 0x09;
+
+const uint8_t data_enumeration = 0x0E;
+const uint8_t enum_accel_MPU6050 = 0; //MPU6050; LI3DH; LSM303DLHC; etc...
+const uint8_t enum_accel_LIS3DH = 1;
+
+const uint8_t info_accel_resolutions_MPU6050[] = {16};
+const uint16_t info_accel_ranges[] = {2, 4, 8, 16};
+const uint16_t info_accel_max_data_rate = 1000;
+
+const uint8_t info_gyro_resolutions_MPU6050[] = {16};
+const uint16_t info_gyro_ranges[] = {250, 500, 1000, 2000};
+const uint16_t info_accel_max_data_rate = 8000;
+
 
 uint8_t Buffer[32];
 
@@ -95,10 +109,15 @@ void loop()
 
 				case cmd_enumerate:
                                          
-                                        Serial.println("Enumeration requested!");
+					Serial.println("Enumeration requested!");
 					      
 					radio.stopListening();
-					radio.write("Hello", 6);
+
+					Buffer[0] = type_data;
+					Buffer[1] = data_enumeration;
+					Buffer[2] = enum_accel_MPU6050;
+
+					radio.write(Buffer, 3);
 					radio.startListening();
 					break;
 				default:

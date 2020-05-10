@@ -12,9 +12,10 @@ class RFAccelShell(cmd.Cmd):
 
 	intro = "rfaccel 0.1 shell.   Type help or ? to list commands.\n"
 	prompt = "(rfaccel)"
+	devicenames = {0: "MPU6050", 1:"LIS3DH", 2:"LSM303DLHC"}
 	radio = None
 	mode = RFAccel.mode_idle
-
+	remotes = []
 
 	retries = 15
 	retry_delay = 5
@@ -39,6 +40,7 @@ class RFAccelShell(cmd.Cmd):
 		if (not (self.mode == RFAccel.mode_conn)):
 			self.enum_mode()
 			self.enumerate()			
+			print(devices)
 		else:
 			print("Still in connection.")
 
@@ -101,6 +103,8 @@ class RFAccelShell(cmd.Cmd):
 	def enumerate(self):
 		if (self.mode == RFAccel.mode_enum):
 
+			self.devices = []
+
 			self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_enumerate]))
 
 			self.radio.startListening()
@@ -115,7 +119,13 @@ class RFAccelShell(cmd.Cmd):
 					length = self.radio.getDynamicPayloadSize()
 					response = self.radio.read(length)
 					print("Received " + str(length) + " bytes")
-					print(response)
+
+					if (response[0] == RFAccel.type_data and response[1] == RFAccel.data_enumeration):
+						self.devices.append(devicenames[response[2]])
+
+					else:
+						print("Invalid enumeration response...")
+
 				elif (millis() - wait_start) > self.enumerate_timeout:
 					timeout = True
 
