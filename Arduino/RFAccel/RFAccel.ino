@@ -8,8 +8,8 @@ RF24 radio(7,8);
 const uint64_t TX_pipe = 0xF0F0F0F0E1LL;
 const uint64_t RX_pipe = 0xF0F0F0F0D2LL;
 
-const uint8_t retries = 1;
-const uint8_t retry_delay = 4; //1 ms
+const uint8_t retries = 15;
+const uint8_t retry_delay = 5; //1 ms
 
 
 uint32_t Buffer[32];

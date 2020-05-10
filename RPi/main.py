@@ -14,14 +14,19 @@ class RFAccelShell(cmd.Cmd):
 	file = None
 
 	retries = 15
-	retry_delay = 4
+	retry_delay = 5
+
+	enumerate_channel = 0
 
 	millis = lambda: int(round(time.time() * 1000))
 
 
 	def do_init(self, arg):
 		'Initialize rfaccel'
-		self.init()
+		if(self.init()):
+			print("Succesfully initialized NRF24L01+")
+		else:
+			print("No NRF24L01 connected")
 
 	def do_info(self, arg):
 		'Print radio details'
@@ -48,6 +53,7 @@ class RFAccelShell(cmd.Cmd):
 		'Exits the shell'
 		print("Closing rfaccel")
 		self.close()
+		return True;
 
 	def close(self):
 		pass
@@ -57,17 +63,27 @@ class RFAccelShell(cmd.Cmd):
 	 	#Setup for GPIO 22 CE and CE0 CSN with SPI Speed @ 8Mhz
 		self.radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ)
 
+		if(!self.radio.isChipConnected()):
+			return False;
+
+
 		self.TX_pipe = 0xF0F0F0F0D2
 		self.RX_pipe = 0xF0F0F0F0E1
 
 		self.radio.begin()
 		self.radio.enableDynamicPayloads()
 		self.radio.setRetries(self.retry_delay, self.retries)
+
+		self.radio.setChannel(enumerate_channel)
+		self.radio.setDataRate(NRF24.BR_2MBPS)
+		self.radio.setPALevel(NRF24.PA_MIN)
 		
 		self.radio.openWritingPipe(self.TX_pipe)
 		self.radio.openReadingPipe(1, self.RX_pipe)
 
 		self.radio.stopListening()
+
+		return True;
 
 if __name__ == "__main__":
 	RFAccelShell().cmdloop()
