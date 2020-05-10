@@ -63,8 +63,8 @@ class RFAccelShell(cmd.Cmd):
 	 	#Setup for GPIO 22 CE and CE0 CSN with SPI Speed @ 8Mhz
 		self.radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ)
 
-		if(!self.radio.isChipConnected()):
-			return False;
+		#if(not self.radio.isChipConnected()): #Does not work due do bad pyRF24 maintenance
+		#	return False;
 
 
 		self.TX_pipe = 0xF0F0F0F0D2
