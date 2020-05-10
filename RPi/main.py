@@ -40,7 +40,7 @@ class RFAccelShell(cmd.Cmd):
 		if (not (self.mode == RFAccel.mode_conn)):
 			self.enum_mode()
 			self.enumerate()			
-			print(devices)
+			print(self.remotes)
 		else:
 			print("Still in connection.")
 
@@ -103,7 +103,7 @@ class RFAccelShell(cmd.Cmd):
 	def enumerate(self):
 		if (self.mode == RFAccel.mode_enum):
 
-			self.devices = []
+			self.remotes = []
 
 			self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_enumerate]))
 
@@ -121,7 +121,7 @@ class RFAccelShell(cmd.Cmd):
 					print("Received " + str(length) + " bytes")
 
 					if (response[0] == RFAccel.type_data and response[1] == RFAccel.data_enumerate):
-						self.devices.append(self.devicenames[response[2]])
+						self.remotes.append(self.devicenames[response[2]])
 
 					else:
 						print("Invalid enumeration response...")
