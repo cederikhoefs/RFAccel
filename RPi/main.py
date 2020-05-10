@@ -3,7 +3,7 @@
 import time
 import cmd
 from RF24 import *
-from RFAccel import *
+import RFAccel
 import RPi.GPIO as GPIO
 
 
@@ -11,12 +11,12 @@ class RFAccelShell(cmd.Cmd):
 
 	intro = "rfaccel 0.1 shell.   Type help or ? to list commands.\n"
 	prompt = "(rfaccel)"
-	file = None
+	radio = None
+	mode = mode_idle
+
 
 	retries = 15
 	retry_delay = 5
-
-	enumerate_channel = 0
 
 	millis = lambda: int(round(time.time() * 1000))
 
@@ -30,7 +30,17 @@ class RFAccelShell(cmd.Cmd):
 
 	def do_info(self, arg):
 		'Print radio details'
-		self.radio.printDetails()
+		if(radio):
+			self.radio.printDetails()
+
+	def do_enumerate(self, arg):
+		'Get available devices'
+
+		if(not (self.mode == RFAccel.mode_conn):
+			self.mode = RFAccel.mode_enum
+			self.enumerate()			
+		else:
+			print("Still in connection.")
 
 	def do_connect(self, arg):
 		'Connect to remote device'
@@ -66,24 +76,29 @@ class RFAccelShell(cmd.Cmd):
 		#if(not self.radio.isChipConnected()): #Does not work due do bad pyRF24 maintenance
 		#	return False;
 
-
-		self.TX_pipe = 0xF0F0F0F0D2
-		self.RX_pipe = 0xF0F0F0F0E1
-
 		self.radio.begin()
 		self.radio.enableDynamicPayloads()
 		self.radio.setRetries(self.retry_delay, self.retries)
 
-		self.radio.setChannel(enumerate_channel)
 		self.radio.setDataRate(NRF24.BR_2MBPS)
 		self.radio.setPALevel(NRF24.PA_MIN)
 		
-		self.radio.openWritingPipe(self.TX_pipe)
-		self.radio.openReadingPipe(1, self.RX_pipe)
-
-		self.radio.stopListening()
+		self.enum_mode()
 
 		return True;
+
+	def enum_mode(self):
+		self.radio.stopListening()
+		self.radio.setChannel(RFAccel.enumerate_channel)
+
+		self.radio.openWritingPipe(default_enum_pipe_out)
+		self.radio.openReadingPipe(1, default_enum_pipe_in)
+
+	def enumerate(self):
+		if(self.mode == RFAccel.mode_enum):
+			pass
+		else:
+			return
 
 if __name__ == "__main__":
 	RFAccelShell().cmdloop()

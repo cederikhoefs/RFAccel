@@ -18,3 +18,10 @@ cmd_get_gyr = 0x07
 cmd_stream_accel = 0x08
 cmd_stream_gyro = 0x09
 
+enumerate_channel = 0
+enum_pipe_out = 0x656E756D4F
+enum_pipe_in = 0x656E756D49
+
+mode_idle = 0x0
+mode_enum = 0x1
+mode_conn = 0x2
