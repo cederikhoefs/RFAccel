@@ -26,7 +26,7 @@ class RFAccelShell(cmd.Cmd):
 		if (self.init()):
 			print("Succesfully initialized NRF24L01+")
 		else:
-			print("No NRF24L01 connected")
+			print("Already initialized.")
 
 	def do_info(self, arg):
 		'Print radio details'
@@ -69,24 +69,25 @@ class RFAccelShell(cmd.Cmd):
 		pass
 
 	def init(self):
+		if(self.radio == None):
+		 	#Setup for GPIO 22 CE and CE0 CSN with SPI Speed @ 8Mhz
+			self.radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ)
 
-	 	#Setup for GPIO 22 CE and CE0 CSN with SPI Speed @ 8Mhz
-		self.radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ)
+			#if(not self.radio.isChipConnected()): #Does not work due do bad pyRF24 maintenance
+			#	return False;
 
-		#if(not self.radio.isChipConnected()): #Does not work due do bad pyRF24 maintenance
-		#	return False;
+			self.radio.begin()
+			self.radio.enableDynamicPayloads()
+			self.radio.setRetries(self.retry_delay, self.retries)
 
-		self.radio.begin()
-		self.radio.enableDynamicPayloads()
-		self.radio.setRetries(self.retry_delay, self.retries)
-
-		self.radio.setDataRate(RF24_2MBPS)
-		self.radio.setPALevel(RF24_PA_MAX)
-		
-		self.enum_mode()
-
-		return True;
-
+			self.radio.setDataRate(RF24_2MBPS)
+			self.radio.setPALevel(RF24_PA_MAX)
+			
+			self.enum_mode()
+			return True;
+		else:
+			return False;
+	
 	def enum_mode(self):
 
 		self.mode = RFAccel.mode_enum

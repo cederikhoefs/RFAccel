@@ -23,6 +23,7 @@ void setup()
   radio.begin();
 
   radio.setAutoAck(false);
+  radio.setDataRate(RF24_2MBPS);
   radio.enableDynamicPayloads();
   radio.setRetries(retry_delay, retries);
 
@@ -31,6 +32,7 @@ void setup()
   radio.openReadingPipe(1, enumerate_pipe_in);
 
   radio.printDetails();
+  
 
   radio.startListening();
   
