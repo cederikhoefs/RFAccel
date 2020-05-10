@@ -120,7 +120,7 @@ class RFAccelShell(cmd.Cmd):
 					response = self.radio.read(length)
 					print("Received " + str(length) + " bytes")
 
-					if (response[0] == RFAccel.type_data and response[1] == RFAccel.data_enumeration):
+					if (response[0] == RFAccel.type_data and response[1] == RFAccel.data_enumerate):
 						self.devices.append(devicenames[response[2]])
 
 					else:

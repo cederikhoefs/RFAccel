@@ -43,7 +43,7 @@ const uint16_t info_accel_max_data_rate = 1000;
 
 const uint8_t info_gyro_resolutions_MPU6050[] = {16};
 const uint16_t info_gyro_ranges[] = {250, 500, 1000, 2000};
-const uint16_t info_accel_max_data_rate = 8000;
+const uint16_t info_gyro_max_data_rate = 8000;
 
 
 uint8_t Buffer[32];
