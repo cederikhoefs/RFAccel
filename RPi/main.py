@@ -101,8 +101,8 @@ class RFAccelShell(cmd.Cmd):
 	def enumerate(self):
 		if (self.mode == RFAccel.mode_enum):
 
-			print(self.radio.write(bytes([RFAccel.type_cmd, RFAccel.cmd_enumerate])))
-
+			self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_enumerate]))
+			#self.radio.write(bytes("Hello"))
 			self.radio.startListening()
 
 			wait_start = millis()
@@ -112,10 +112,10 @@ class RFAccelShell(cmd.Cmd):
 			while (not timeout):
 
 				if (self.radio.available()):
-					length = radio.getDynamicPayloadSize()
-					response = radio.read(length)
+					length = self.radio.getDynamicPayloadSize()
+					response = self.radio.read(length)
 					print("Received " + str(length) + " bytes")
-
+					print(response)
 				elif (millis() - wait_start) > self.enumerate_timeout:
 					timeout = True
 
