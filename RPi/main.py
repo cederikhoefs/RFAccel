@@ -33,17 +33,21 @@ class RFAccelShell(cmd.Cmd):
 		'Print radio details'
 		if (self.radio):
 			self.radio.printDetails()
+		else:
+			print("Not yet initialized.")
 
 	def do_enumerate(self, arg):
 		'Get available devices'
-
-		if (not (self.mode == RFAccel.mode_conn)):
-			self.enum_mode()
-			self.enumerate()			
-			print(devices)
+		if(self.radio):
+			if (not (self.mode == RFAccel.mode_conn)):
+				self.enum_mode()
+				self.enumerate()			
+				print(devices)
+			else:
+				print("Still in connection.")
 		else:
-			print("Still in connection.")
-
+			print("Not yet initialized.")
+			
 	def do_connect(self, arg):
 		'Connect to remote device'
 		pass
