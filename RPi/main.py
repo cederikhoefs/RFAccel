@@ -18,26 +18,28 @@ class RFAccelShell(cmd.Cmd):
 	retries = 15
 	retry_delay = 5
 
+	enumerate_timeout = 1000
+
 	millis = lambda: int(round(time.time() * 1000))
 
 
 	def do_init(self, arg):
 		'Initialize rfaccel'
-		if(self.init()):
+		if (self.init()):
 			print("Succesfully initialized NRF24L01+")
 		else:
 			print("No NRF24L01 connected")
 
 	def do_info(self, arg):
 		'Print radio details'
-		if(self.radio):
+		if (self.radio):
 			self.radio.printDetails()
 
 	def do_enumerate(self, arg):
 		'Get available devices'
 
-		if(not (self.mode == RFAccel.mode_conn)):
-			self.mode = RFAccel.mode_enum
+		if (not (self.mode == RFAccel.mode_conn)):
+			self.enum_mode()
 			self.enumerate()			
 		else:
 			print("Still in connection.")
@@ -88,17 +90,36 @@ class RFAccelShell(cmd.Cmd):
 		return True;
 
 	def enum_mode(self):
+
+		self.mode = RFAccel.mode_enum
+
 		self.radio.stopListening()
 		self.radio.setChannel(RFAccel.enumerate_channel)
 
-		self.radio.openWritingPipe(RFAccel.enum_pipe_out)
-		self.radio.openReadingPipe(1, RFAccel.enum_pipe_in)
+		self.radio.openWritingPipe(RFAccel.enumerate_pipe_out)
+		self.radio.openReadingPipe(1, RFAccel.enumerate_pipe_in)
 
 	def enumerate(self):
-		if(self.mode == RFAccel.mode_enum):
-			pass
-		else:
-			return
+		if (self.mode == RFAccel.mode_enum):
+
+			self.radio.write(bytes([type_cmd, cmd_enumerate])
+
+			self.radio.startListening()
+
+			wait_start = millis()
+
+			timeout = False
+
+			while (not timeout):
+
+				if (self.radio.available()):
+					length = radio.getDynamicPayloadSize()
+					response = radio.read(length)
+					print("Received " + str(length) + " bytes")
+
+				elif (millis() - wait_start) > self.enumerate_timeout:
+					timeout = True
+
 
 if __name__ == "__main__":
 	RFAccelShell().cmdloop()

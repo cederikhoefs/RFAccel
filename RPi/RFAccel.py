@@ -19,8 +19,9 @@ cmd_stream_accel = 0x08
 cmd_stream_gyro = 0x09
 
 enumerate_channel = 0
-enum_pipe_out = 0x656E756D4F
-enum_pipe_in = 0x656E756D49
+
+enumerate_pipe_out = 0x656E756D4F
+enumerate_pipe_in = 0x656E756D49
 
 mode_idle = 0x0
 mode_enum = 0x1

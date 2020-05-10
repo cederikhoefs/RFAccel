@@ -5,12 +5,12 @@
 
 RF24 radio(7,8);
 
-const uint64_t TX_pipe = 0xF0F0F0F0E1LL;
-const uint64_t RX_pipe = 0xF0F0F0F0D2LL;
+const uint8_t  enumerate_channel = 0;
+const uint64_t enumerate_pipe_in = 0x656E756D4F;
+const uint64_t enumerate_pipe_out = 0x656E756D49;
 
 const uint8_t retries = 15;
-const uint8_t retry_delay = 5; //1 ms
-
+const uint8_t retry_delay = 5; //1.5 ms
 
 uint32_t Buffer[32];
 
@@ -22,15 +22,17 @@ void setup()
   
   radio.begin();
 
-
+  radio.setAutoAck(false);
   radio.enableDynamicPayloads();
   radio.setRetries(retry_delay, retries);
 
-  radio.openWritingPipe(TX_pipe);
-  radio.openReadingPipe(1, RX_pipe);
+  radio.setChannel(enumerate_channel);
+  radio.openWritingPipe(enumerate_pipe_out);
+  radio.openReadingPipe(1, enumerate_pipe_in);
+
+  radio.printDetails();
 
   radio.startListening();
-  radio.printDetails();
   
 }
 
@@ -47,6 +49,6 @@ void loop()
       Serial.print(F("Got packet of "));
       Serial.print(len);
       Serial.println(" bytes");
-  
+    }
 }
 
