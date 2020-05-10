@@ -6,6 +6,7 @@ from RF24 import *
 import RFAccel
 import RPi.GPIO as GPIO
 
+millis = lambda: int(round(time.time() * 1000))
 
 class RFAccelShell(cmd.Cmd): 
 
@@ -19,9 +20,6 @@ class RFAccelShell(cmd.Cmd):
 	retry_delay = 5
 
 	enumerate_timeout = 1000
-
-	millis = lambda: int(round(time.time() * 1000))
-
 
 	def do_init(self, arg):
 		'Initialize rfaccel'
@@ -102,7 +100,7 @@ class RFAccelShell(cmd.Cmd):
 	def enumerate(self):
 		if (self.mode == RFAccel.mode_enum):
 
-			self.radio.write(bytes([type_cmd, cmd_enumerate])
+			self.radio.write(bytes([RFAccel.type_cmd, RFAccel.cmd_enumerate]))
 
 			self.radio.startListening()
 
