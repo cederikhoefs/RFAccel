@@ -121,7 +121,7 @@ class RFAccelShell(cmd.Cmd):
 					print("Received " + str(length) + " bytes")
 
 					if (response[0] == RFAccel.type_data and response[1] == RFAccel.data_enumerate):
-						self.devices.append(devicenames[response[2]])
+						self.devices.append(self.devicenames[response[2]])
 
 					else:
 						print("Invalid enumeration response...")
