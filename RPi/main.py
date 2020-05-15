@@ -124,7 +124,7 @@ class RFAccelShell(cmd.Cmd):
 
 					length = self.radio.getDynamicPayloadSize()
 
-					if (length == data_enumerate_length):
+					if (length == RFAccel.data_enumerate_length):
 
 						response = self.radio.read(length)
 						r_type = response[0]
