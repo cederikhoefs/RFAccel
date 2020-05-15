@@ -49,7 +49,20 @@ class RFAccelShell(cmd.Cmd):
 			
 	def do_connect(self, arg):
 		'Connect to remote device'
-		pass
+		if(self.radio):
+			d_id = int(arg, 0)
+			if (not self.Connected):
+				if(d_id in self.remotes):
+					if(self.connect(arg)):
+						print("Connect succesfully.")
+					else:
+						print("Could not connect.")
+				else:
+					print("Such a device was not enumerated.")
+			else:
+				print("Still in connection.")
+		else:
+			print("Not yet initialized.")
 
 	def complete_connect(self, text, line, begidx, idx):
 		'Yields list of enumerated ID'
@@ -152,7 +165,7 @@ class RFAccelShell(cmd.Cmd):
 				elif (millis() - wait_start) > self.enumerate_timeout:
 					timeout = True
 
-	def connect(self):
+	def connect(self, d_id):
 		pass
 
 
