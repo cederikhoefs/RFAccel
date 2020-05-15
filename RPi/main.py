@@ -103,10 +103,10 @@ class RFAccelShell(cmd.Cmd):
 		if (not self.Connected):
 
 			self.radio.stopListening()
-			self.radio.setChannel(RFAccel.enumerate_channel)
+			self.radio.setChannel(RFAccel.channel_enumerate)
 
-			self.radio.openWritingPipe(RFAccel.enumerate_pipe_out)
-			self.radio.openReadingPipe(1, RFAccel.enumerate_pipe_in)
+			self.radio.openWritingPipe(RFAccel.pipe_out_enumerate)
+			self.radio.openReadingPipe(1, RFAccel.pipe_in_enumerate)
 
 			self.remotes = {}
 
