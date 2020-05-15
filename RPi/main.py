@@ -49,12 +49,20 @@ class RFAccelShell(cmd.Cmd):
 			
 	def do_connect(self, arg):
 		'Connect to remote device'
-		if(self.radio):
-			d_id = int(arg, 0)
+		if (self.radio):
+			if(arg == ''):
+				if (len(self.remotes) == 1):
+					d_id = self.remotes.keys()[0]			
+				else:
+					print("Please specify a device to connect to.")
+					return
+			else:
+				d_id = int(arg, 0)
+
 			if (not self.Connected):
-				if(d_id in self.remotes):
-					if(self.connect(arg)):
-						print("Connect succesfully.")
+				if (d_id in self.remotes):
+					if (self.connect(arg)):
+						print("Connected succesfully.")
 					else:
 						print("Could not connect.")
 				else:
@@ -68,7 +76,6 @@ class RFAccelShell(cmd.Cmd):
 		'Yields list of enumerated ID'
 		possible_ids = []
 		for c_id in self.remotes.keys():
-			print(hex(c_id))
 			if(hex(c_id).startswith(text)):
 				possible_ids.append(hex(c_id))
 		return possible_ids
