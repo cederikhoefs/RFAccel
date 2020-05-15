@@ -130,14 +130,13 @@ class RFAccelShell(cmd.Cmd):
 						response = self.radio.read(length)
 						r_type = response[0]
 						r_cmd = response[1]
-						r_id = struct.unpack("<I", response[2:6])
+						r_id = struct.unpack("<I", bytearray(response[2:6]))[0]
 						r_chip = RFAccel.enumerate_chip_names[response[6]]
 						r_cap = response[7]
 
-
 						if ((response[0] == RFAccel.type_data) and (response[1] == RFAccel.data_enumerate)):
 							self.remotes[r_id] = [r_chip, r_cap]
-							print("Found device with ID " + hex(r_id) + " of type " + r_dev_name + "and capatibilities " + bin(r_cap))
+							print("Found device with ID " + hex(r_id) + " with chip " + r_chip + " and capatibilities " + bin(r_cap))
 
 						else:
 							print("Invalid enumeration response with correct size...")
