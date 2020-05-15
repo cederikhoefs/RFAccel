@@ -136,7 +136,7 @@ class RFAccelShell(cmd.Cmd):
 
 
 						if ((response[0] == RFAccel.type_data) and (response[1] == RFAccel.data_enumerate)):
-							self.remotes[r_id] = [r_dev_name, r_cap]
+							self.remotes[r_id] = [r_chip, r_cap]
 							print("Found device with ID " + hex(r_id) + " of type " + r_dev_name + "and capatibilities " + bin(r_cap))
 
 						else:
