@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import time
+import struct
 import cmd
 from RF24 import *
 import RFAccel
@@ -129,7 +130,7 @@ class RFAccelShell(cmd.Cmd):
 						response = self.radio.read(length)
 						r_type = response[0]
 						r_cmd = response[1]
-						r_id = int.from_bytes(response[2:6])
+						r_id = struct.unpack("<I", response[2:6])
 						r_chip = RFAccel.data_enumerate_chip_names[response[6]]
 						r_cap = response[7]
 
