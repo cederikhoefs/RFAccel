@@ -131,7 +131,7 @@ class RFAccelShell(cmd.Cmd):
 						r_type = response[0]
 						r_cmd = response[1]
 						r_id = struct.unpack("<I", response[2:6])
-						r_chip = RFAccel.data_enumerate_chip_names[response[6]]
+						r_chip = RFAccel.enumerate_chip_names[response[6]]
 						r_cap = response[7]
 
 
