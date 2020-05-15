@@ -51,9 +51,14 @@ class RFAccelShell(cmd.Cmd):
 		'Connect to remote device'
 		pass
 
-	def complete_connect(self, arg):
+	def complete_connect(self, text, line, begidx, idx):
 		'Yields list of enumerated ID'
-		pass
+		possible_ids = []
+		for c_id in self.remotes.keys():
+			print(hex(c_id))
+			if(hex(c_id).startswith(text)):
+				possible_ids.append(hex(c_id))
+		return possible_ids
 
 	def do_calibrate(self, arg):
 		'Calibrate the stationary remote device'
