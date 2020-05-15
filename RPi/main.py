@@ -52,6 +52,7 @@ class RFAccelShell(cmd.Cmd):
 
 	def complete_connect(self, arg):
 		'Yields list of enumerated ID'
+		pass
 
 	def do_calibrate(self, arg):
 		'Calibrate the stationary remote device'
@@ -147,7 +148,7 @@ class RFAccelShell(cmd.Cmd):
 					timeout = True
 
 	def connect(self):
-
+		pass
 
 
 if __name__ == "__main__":
