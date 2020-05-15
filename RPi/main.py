@@ -12,9 +12,8 @@ class RFAccelShell(cmd.Cmd):
 
 	intro = "rfaccel 0.1 shell.   Type help or ? to list commands.\n"
 	prompt = "(rfaccel)"
-	devicenames = {0: "MPU6050", 1:"LIS3DH", 2:"LSM303DLHC"}
 	radio = None
-	mode = RFAccel.mode_idle
+	connected = False
 	remotes = []
 
 	retries = 15
@@ -39,8 +38,7 @@ class RFAccelShell(cmd.Cmd):
 	def do_enumerate(self, arg):
 		'Get available devices'
 		if(self.radio):
-			if (not (self.mode == RFAccel.mode_conn)):
-				self.enum_mode()
+			if (not self.Connected):
 				self.enumerate()			
 				print(self.remotes)
 			else:
@@ -51,6 +49,9 @@ class RFAccelShell(cmd.Cmd):
 	def do_connect(self, arg):
 		'Connect to remote device'
 		pass
+
+	def complete_connect(self, arg):
+		'Yields list of enumerated ID'
 
 	def do_calibrate(self, arg):
 		'Calibrate the stationary remote device'
@@ -88,26 +89,25 @@ class RFAccelShell(cmd.Cmd):
 
 			self.radio.setDataRate(RF24_2MBPS)
 			self.radio.setPALevel(RF24_PA_MAX)
-			
-			self.enum_mode()
+
+			self.Connected = False;
+
 			return True;
 		else:
 			return False;
 	
-	def enum_mode(self):
-
-		self.mode = RFAccel.mode_enum
-
-		self.radio.stopListening()
-		self.radio.setChannel(RFAccel.enumerate_channel)
-
-		self.radio.openWritingPipe(RFAccel.enumerate_pipe_out)
-		self.radio.openReadingPipe(1, RFAccel.enumerate_pipe_in)
 
 	def enumerate(self):
-		if (self.mode == RFAccel.mode_enum):
 
-			self.remotes = []
+		if (not self.Connected):
+
+			self.radio.stopListening()
+			self.radio.setChannel(RFAccel.enumerate_channel)
+
+			self.radio.openWritingPipe(RFAccel.enumerate_pipe_out)
+			self.radio.openReadingPipe(1, RFAccel.enumerate_pipe_in)
+
+			self.remotes = {}
 
 			self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_enumerate]))
 
@@ -120,18 +120,34 @@ class RFAccelShell(cmd.Cmd):
 			while (not timeout):
 
 				if (self.radio.available()):
-					length = self.radio.getDynamicPayloadSize()
-					response = self.radio.read(length)
-					print("Received " + str(length) + " bytes")
 
-					if (response[0] == RFAccel.type_data and response[1] == RFAccel.data_enumerate):
-						self.remotes.append(self.devicenames[response[2]])
+					length = self.radio.getDynamicPayloadSize()
+
+					if (length == data_enumerate_length):
+
+						response = self.radio.read(length)
+						r_type = response[0]
+						r_cmd = response[1]
+						r_id = int.from_bytes(response[2:6])
+						r_chip = RFAccel.data_enumerate_chip_names[response[6]]
+						r_cap = response[7]
+
+
+						if ((response[0] == RFAccel.type_data) and (response[1] == RFAccel.data_enumerate)):
+							self.remotes[r_id] = [r_dev_name, r_cap]
+							print("Found device with ID " + hex(r_id) + " of type " + r_dev_name + "and capatibilities " + bin(r_cap))
+
+						else:
+							print("Invalid enumeration response with correct size...")
 
 					else:
-						print("Invalid enumeration response...")
+						print("Received invalid enumeration response length: " + str(length) + " bytes")
 
 				elif (millis() - wait_start) > self.enumerate_timeout:
 					timeout = True
+
+	def connect(self):
+
 
 
 if __name__ == "__main__":

@@ -1,3 +1,8 @@
+channel_enumerate = 0
+
+pipe_out_enumerate = 0x656E756D4F
+pipe_in_enumerate = 0x656E756D49
+
 type_cmd =    0x00
 type_data =   0x01
 type_stream = 0x02
@@ -17,12 +22,11 @@ cmd_stream_accel = 0x08
 cmd_stream_gyro = 0x09
 
 data_enumerate = 0x0E
+data_enumerate_length = 8			#change this when adding parameters to enumeration response packet
+	
+enumerate_chip_names	= {0: "Unknown", 1: "MPU6050", 1:"LIS3DH", 2:"LSM303DLHC"}
+enumerate_cap_rf 		= 1 << 0		#must always be true, otherwise we couldn't talk.
+enumerate_cap_acc		= 1 << 1		#accelerometer available
+enumerate_cap_gyro		= 1 << 2		#gyroscope available
+enumerate_cap_magnet	= 1 << 3		#magnetometer available
 
-enumerate_channel = 0
-
-enumerate_pipe_out = 0x656E756D4F
-enumerate_pipe_in = 0x656E756D49
-
-mode_idle = 0x0
-mode_enum = 0x1
-mode_conn = 0x2
