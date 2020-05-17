@@ -25,7 +25,7 @@ cmd_stream_gyro = 0x09
 data_enumerate = 0x0E
 data_enumerate_length = 8			#change this when adding parameters to enumeration response packet
 	
-enumerate_chip_names	= {0: "Unknown", 1: "MPU6050", 1:"LIS3DH", 2:"LSM303DLHC"}
+enumerate_chip_names	= {0: "Unknown", 1: "MPU6050", 2:"LIS3DH", 3:"LSM303DLHC"}
 enumerate_cap_rf 		= 1 << 0		#must always be true, otherwise we couldn't talk.
 enumerate_cap_acc		= 1 << 1		#accelerometer available
 enumerate_cap_gyro		= 1 << 2		#gyroscope available

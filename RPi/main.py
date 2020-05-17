@@ -180,7 +180,7 @@ class RFAccelShell(cmd.Cmd):
 		
 		self.radio.stopListening()
 
-		self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_start, RF.connect_timestamp_ms]))
+		self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_connect, RF.connect_timestamp_ms]))
 		self.radio.startListening()
 
 		wait_start = millis()
