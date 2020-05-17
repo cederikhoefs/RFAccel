@@ -20,7 +20,8 @@ const uint8_t type_data = 0x01;
 const uint8_t type_stream = 0x02;
 
 const uint8_t cmd_enumerate = 0x0E;       
-const uint8_t cmd_connect = 0x0A;   
+const uint8_t cmd_connect = 0x0A;  
+const uint8_t cmd_test_channel = 0x0B;
 const uint8_t cmd_disconnect = 0x0F;        
 const uint8_t cmd_close_stream = 0x0C;    
 
@@ -53,6 +54,8 @@ const uint8_t connect_timestamp_none = 0x00;
 const uint8_t connect_timestamp_ms = 0x01;
 const uint8_t connect_timestamp_us = 0x02;
 
+const uint8_t cmd_test_channel_length = 2;
+
 const uint8_t info_accel_resolutions_MPU6050[] = {16};
 const uint16_t  info_accel_ranges[] = {2, 4, 8, 16};
 const uint16_t  info_accel_max_data_rate = 1000;
@@ -69,6 +72,8 @@ const uint8_t CHIP = enumerate_chip_MPU6050;
 const uint64_t  pipe_in = 0x6461746149;
 const uint64_t  pipe_out = 0x646174614f;
 
+
+uint8_t Channel = 0;
 uint8_t TimestampFormat = 0;
 
 uint8_t Buffer[32];
@@ -93,12 +98,15 @@ void setup()
     radio.printDetails();
 		
     radio.startListening();
-	
+
+    Channel = channel_enumerate;
+    	
 }
 
 void loop()
 {
 
+    
     while ( radio.available() )
     {
 
@@ -153,11 +161,13 @@ void loop()
 
             case cmd_connect:
 
-            	Serial.println("Connecting...");
-
             	radio.stopListening();
 
-            	TimestampFormat = Buffer[2];
+            	Channel = Buffer[2];
+            	TimestampFormat = Buffer[3];
+
+            	Serial.print("Connecting on channel ");
+            	Serial.println(Channel);
 
             	Serial.print("Time Format: ");
             	switch(TimestampFormat){
@@ -192,9 +202,15 @@ void loop()
             	Buffer[11] = (pipe_in >> 32)& 0xFF;
             
             	radio.write(Buffer, data_connect_length);
-            	radio.startListening();
+            	
+            	radio.setChannel(Channel);
+            	radio.openWritingPipe(pipe_out);
+            	radio.openReadingPipe(1, pipe_in);
 
+            	Buffer[0] = type_cmd;
+            	Buffer[1] = cmd_test_channel;
 
+            	radio.write(Buffer, cmd_test_channel_length);
 
 
             default:
