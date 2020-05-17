@@ -8,8 +8,9 @@ type_data =   0x01
 type_stream = 0x02
 
 cmd_enumerate = 0x0E				#Sent on 'enumerate' channel for device discovery
-cmd_start = 0x0A					#Starts a connection between RPi and Arduino on specified radio channel
-cmd_end = 0x0F						#Ends the connection, lets the arduino return to the enumerate channel
+cmd_connect = 0x0A					#Starts a connection between RPi and Arduino on specified radio channel
+cmd_disconnect = 0x0F				#Ends the connection, lets the arduino return to the enumerate channel
+cmt_test_channel = 0x0B				#Sent on actual device channel to test connection
 cmd_close_stream = 0x0C				#Stops the current stream, sent as an ackPayload
 
 cmd_set_acc_rate = 0x02
@@ -30,3 +31,11 @@ enumerate_cap_acc		= 1 << 1		#accelerometer available
 enumerate_cap_gyro		= 1 << 2		#gyroscope available
 enumerate_cap_magnet	= 1 << 3		#magnetometer available
 
+data_connect = 0x0C
+data_connect_length = 12
+
+connect_timestamp_none = 0x00
+connect_timestamp_ms = 0x01
+connect_timestamp_us = 0x02
+
+cmd_test_length = 2

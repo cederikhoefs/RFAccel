@@ -21,6 +21,10 @@ class RFAccelShell(cmd.Cmd):
 	retry_delay = 5
 
 	enumerate_timeout = 1000
+	connect_timeout = 100
+
+	pipe_in = None
+	pipe_out = None
 
 	def do_init(self, arg):
 		'Initialize rfaccel'
@@ -172,8 +176,84 @@ class RFAccelShell(cmd.Cmd):
 				elif (millis() - wait_start) > self.enumerate_timeout:
 					timeout = True
 
-	def connect(self, d_id):
-		pass
+	def connect(self, d_id, channel = 123):
+		
+		self.radio.stopListening()
+
+		self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_start, RF.connect_timestamp_ms]))
+		self.radio.startListening()
+
+		wait_start = millis()
+
+		timeout = False
+
+		while ((not timeout) and (not self.radio.available())):
+			if (millis() - wait_start) > self.connect_timeout:
+				timeout = True
+
+		if (timeout):
+
+			print("Connect response timed out.")
+			return False;
+
+		length = self.radio.getDynamicPayloadSize()
+
+		if (length == RFAccel.data_connect_length):
+
+			response = self.radio.read(length)
+
+			r_type = response[0]
+			r_cmd = response[1]
+
+			self.pipe_in =  struct.unpack("<Q", bytearray(response[2:7]))[0]
+			self.pipe_out = struct.unpack("<Q", bytearray(response[7:12]))[0]
+
+			if ((r_type == RFAccel.type_data) and (r_cmd == RFAccel.data_connect)):
+				print("Connecting to device " + hex(d_id) + " on channel " + channel + "I/" + hex(pipe_in) +"; O/" + hex(pipe_out))
+
+				self.radio.openWritingPipe(self.pipe_out)
+				self.radio.openReadingPipe(1, self.pipe_in)
+
+				self.radio.startListening()
+
+				while ((not timeout) and (not self.radio.available())):
+					if (millis() - wait_start) > self.connect_timeout:
+						timeout = True
+
+				if (timeout):
+
+					self.radio.stopListening()
+					self.radio.setChannel(RFAccel.channel_enumerate)
+
+					self.radio.openWritingPipe(RFAccel.pipe_out_enumerate)
+					self.radio.openReadingPipe(1, RFAccel.pipe_in_enumerate)
+
+					print("No test packet on given channel, falling back to enumerate channel.")
+					return False;
+
+				length = self.radio.getDynamicPayloadSize()
+
+				if (length == RFAccel.cmd_test_length):
+
+					response = self.radio.read(length)
+
+					r_type = response[0]
+					r_cmd = response[1]
+
+					if((r_type == RFAccel.type_cmd) and (r_cmd == RFAccel.cmd_test_channel)):
+						print("Received test channel command on new channel.")
+						self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_test_channel]))
+
+				else:
+					print("Received ivalid test channel command length: " + str(length) + " bytes")
+
+			else:
+				print("Invalid connect response with correct size...")
+				return False
+
+		else:
+			print("Received invalid connect response length: " + str(length) + " bytes")
+			return False
 
 
 if __name__ == "__main__":
