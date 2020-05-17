@@ -159,7 +159,7 @@ void loop()
 
             	TimestampFormat = Buffer[2];
 
-            	Serial.print("Sending time in ");
+            	Serial.print("Time Format: ");
             	switch(TimestampFormat){
 
             	case connect_timestamp_none:

@@ -205,8 +205,11 @@ class RFAccelShell(cmd.Cmd):
 			r_type = response[0]
 			r_cmd = response[1]
 
-			self.pipe_in =  struct.unpack("<Q", bytearray(response[2:7]))[0]
-			self.pipe_out = struct.unpack("<Q", bytearray(response[7:12]))[0]
+			self.pipe_in =  struct.unpack("<I", bytearray(response[2:7]))[0] # workaround for struct.unpack only accepting power of two bytes
+			self.pipe_in |= (struct.unpack("<B", bytearray(response[6]))[0] << 48)
+
+			self.pipe_out = struct.unpack("<I", bytearray(response[7:12]))[0]
+			self.pipeout |= (struct.unpack("<B", bytearray(response[11]))[0] << 48)
 
 			if ((r_type == RFAccel.type_data) and (r_cmd == RFAccel.data_connect)):
 				print("Connecting to device " + hex(d_id) + " on channel " + channel + "I/" + hex(pipe_in) +"; O/" + hex(pipe_out))
