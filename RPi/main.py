@@ -45,7 +45,6 @@ class RFAccelShell(cmd.Cmd):
 		if(self.radio):
 			if (not self.Connected):
 				self.enumerate()			
-				print(self.remotes)
 			else:
 				print("Still in connection.")
 		else:
@@ -65,7 +64,7 @@ class RFAccelShell(cmd.Cmd):
 
 			if (not self.Connected):
 				if (d_id in self.remotes):
-					if (self.connect(arg)):
+					if (self.connect(d_id)):
 						print("Connected succesfully.")
 					else:
 						print("Could not connect.")
@@ -209,10 +208,11 @@ class RFAccelShell(cmd.Cmd):
 			self.pipe_in |= (struct.unpack("<B", bytearray([response[6]]))[0] << 48)
 
 			self.pipe_out = struct.unpack("<I", bytearray(response[7:11]))[0]
-			self.pipeout |= (struct.unpack("<B", bytearray([response[11]]))[0] << 48)
+			self.pipe_out |= (struct.unpack("<B", bytearray([response[11]]))[0] << 48)
 
 			if ((r_type == RFAccel.type_data) and (r_cmd == RFAccel.data_connect)):
-				print("Connecting to device " + hex(d_id) + " on channel " + channel + "I/" + hex(pipe_in) +"; O/" + hex(pipe_out))
+				
+				print("Connecting to device " + hex(d_id) + " on channel " + str(channel) + "; I/" + hex(self.pipe_in) +"; O/" + hex(self.pipe_out))
 
 				self.radio.openWritingPipe(self.pipe_out)
 				self.radio.openReadingPipe(1, self.pipe_in)
