@@ -229,20 +229,25 @@ void loop()
             	radio.write(Buffer, cmd_test_channel_length);
             	Serial.println("Sent test_channel packet.");
             
-                Timeout = millis() + 100;
                 radio.startListening();
                 
+                Timeout = millis() + 100;
+                
+                while(!(millis() >= Timeout) && !radio.available());
+                
+                if(millis() >= Timeout){
+                    Serial.println("Timeout when waiting for test_channel");
+                    radio.setChannel(channel_enumerate);
+                    Channel = channel_enumerate;
+                    radio.openWritingPipe(pipe_out_enumerate);
+                    radio.openReadingPipe(1, pipe_in_enumerate);
+                    continue;
+                    
+                }
+                
                 break;
                 
-            case cmd_test_channel:
-            
-                Timeout = 0;
-                Serial.println("Received test_channel packet.");
-
-                connected = true;
-            
-                break;
-            
+                
             default:
                 break;
                 
@@ -254,6 +259,7 @@ void loop()
     	    break;
     	
         }
+       
     }
 }
 
