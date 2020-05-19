@@ -179,7 +179,7 @@ class RFAccelShell(cmd.Cmd):
 				elif (millis() - wait_start) > self.enumerate_timeout:
 					timeout = True
 
-	def connect(self, d_id, channel = 123):
+	def connect(self, d_id, channel = 18):
 		
 		self.radio.stopListening()
 
