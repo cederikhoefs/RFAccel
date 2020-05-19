@@ -106,7 +106,6 @@ void setup()
 void loop()
 {
 
-    
     while ( radio.available() )
     {
 
