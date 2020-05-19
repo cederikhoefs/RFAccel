@@ -225,7 +225,7 @@ class RFAccelShell(cmd.Cmd):
 				self.radio.startListening()
 
 				while ((not timeout) and (not self.radio.available())):
-					if (millis() - wait_start) > self.connect_timeout:
+					if (millis() - wait_start) > self.enumerate_timeout:
 						timeout = True
 
 				if (timeout):

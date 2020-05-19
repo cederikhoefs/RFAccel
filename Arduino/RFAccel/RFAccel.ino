@@ -209,10 +209,13 @@ void loop()
             	radio.setChannel(Channel);
             	radio.openWritingPipe(pipe_out);
             	radio.openReadingPipe(1, pipe_in);
+                
+                radio.printDetails();
 
+    
             	Buffer[0] = type_cmd;
             	Buffer[1] = cmd_test_channel;
-
+            
             	radio.write(Buffer, cmd_test_channel_length);
 
 
