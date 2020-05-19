@@ -217,6 +217,8 @@ class RFAccelShell(cmd.Cmd):
 				
 				print("Connecting to device " + hex(d_id) + " on channel " + str(channel) + "; I/" + hex(self.pipe_in) +"; O/" + hex(self.pipe_out))
 
+				self.radio.setChannel(channel)
+
 				self.radio.openWritingPipe(self.pipe_out)
 				self.radio.openReadingPipe(1, self.pipe_in)
 
