@@ -1,6 +1,7 @@
+#define ARDUINO_ARCH_AVR
 #include <SPI.h>
-#include "nRF24L01.h"
 #include "RF24.h"
+#include "printf.h"
 
 //#define VERBOSE
 
@@ -82,9 +83,12 @@ void setup()
 {
 
     Serial.begin(115200);
+    printf_begin();
     Serial.println("RFAccel");
-		
-    radio.begin();
+   
+    if(!radio.begin()){
+        Serial.println("Could not init NRF24L01!!!");
+    }
 
     radio.setAutoAck(true);
     radio.setDataRate(RF24_2MBPS);
@@ -94,7 +98,7 @@ void setup()
     radio.setChannel(channel_enumerate);
     radio.openWritingPipe(pipe_out_enumerate);
     radio.openReadingPipe(1, pipe_in_enumerate);
-    
+      
     radio.printDetails();
 		
     radio.startListening();

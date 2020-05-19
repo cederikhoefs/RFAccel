@@ -54,7 +54,10 @@ class RFAccelShell(cmd.Cmd):
 		'Connect to remote device'
 		if (self.radio):
 			if(arg == ''):
-				if (len(self.remotes) == 1):
+				if(len(self.remotes) == 0):
+					print("No devices enumerated.")
+					return
+				elif (len(self.remotes) == 1):
 					d_id = self.remotes.keys()[0]			
 				else:
 					print("Please specify a device to connect to.")
@@ -205,10 +208,10 @@ class RFAccelShell(cmd.Cmd):
 			r_cmd = response[1]
 
 			self.pipe_in =  struct.unpack("<I", bytearray(response[2:6]))[0] # workaround for struct.unpack only accepting power of two bytes
-			self.pipe_in |= (struct.unpack("<B", bytearray([response[6]]))[0] << 48)
+			self.pipe_in |= (struct.unpack("<B", bytearray([response[6]]))[0] << 32)
 
 			self.pipe_out = struct.unpack("<I", bytearray(response[7:11]))[0]
-			self.pipe_out |= (struct.unpack("<B", bytearray([response[11]]))[0] << 48)
+			self.pipe_out |= (struct.unpack("<B", bytearray([response[11]]))[0] << 32)
 
 			if ((r_type == RFAccel.type_data) and (r_cmd == RFAccel.data_connect)):
 				
