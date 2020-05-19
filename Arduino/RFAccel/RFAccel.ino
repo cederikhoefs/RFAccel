@@ -216,7 +216,8 @@ void loop()
             	Buffer[0] = type_cmd;
             	Buffer[1] = cmd_test_channel;
             
-            	radio.write(Buffer, cmd_test_channel_length);
+            	Serial.println(radio.write(Buffer, cmd_test_channel_length));
+            	Serial.println("Sent test_channel packet.");
 
 
             default:

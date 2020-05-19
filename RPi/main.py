@@ -117,6 +117,7 @@ class RFAccelShell(cmd.Cmd):
 			#	return False;
 
 			self.radio.begin()
+			self.radio.setAutoAck(True)
 			self.radio.enableDynamicPayloads()
 			self.radio.setRetries(self.retry_delay, self.retries)
 
