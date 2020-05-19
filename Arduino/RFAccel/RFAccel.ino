@@ -3,7 +3,7 @@
 #include "RF24.h"
 #include "printf.h"
 
-//#define VERBOSE
+#define VERBOSE
 
 
 
@@ -75,9 +75,14 @@ const uint64_t  pipe_out = 0x646174614f;
 
 
 uint8_t Channel = 0;
+bool connected = false;
+
 uint8_t TimestampFormat = 0;
 
+
 uint8_t Buffer[32];
+
+uint32_t Timeout = 0;
 
 void setup()
 {
@@ -109,7 +114,12 @@ void setup()
 
 void loop()
 {
-
+    if(Timeout >= millis()){
+        Serial.println("Timeout!!!");        
+        Timeout = 0;
+    }
+    
+    
     while ( radio.available() )
     {
 
@@ -134,7 +144,7 @@ void loop()
         #endif
     
         if(len < 2){
-        	continue;
+            continue;
         }
     
         switch(Buffer[0]){
@@ -216,13 +226,28 @@ void loop()
             	Buffer[0] = type_cmd;
             	Buffer[1] = cmd_test_channel;
             
-            	Serial.println(radio.write(Buffer, cmd_test_channel_length));
+            	radio.write(Buffer, cmd_test_channel_length);
             	Serial.println("Sent test_channel packet.");
+            
+                Timeout = millis() + 100;
+                radio.startListening();
+                
+                break;
+                
+            case cmd_test_channel:
+            
+                Timeout = 0;
+                Serial.println("Received test_channel packet.");
 
-
+                connected = true;
+            
+                break;
+            
             default:
                 break;
+                
             }
+            
             break;
 
     	default:

@@ -251,7 +251,11 @@ class RFAccelShell(cmd.Cmd):
 
 					if((r_type == RFAccel.type_cmd) and (r_cmd == RFAccel.cmd_test_channel)):
 						print("Received test channel command on new channel.")
+						self.radio.printDetails()
 						self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_test_channel]))
+						print("Sent test channel command on new channel.")
+
+						return True;
 
 				else:
 					print("Received ivalid test channel command length: " + str(length) + " bytes")
