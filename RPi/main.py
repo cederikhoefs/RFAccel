@@ -99,7 +99,8 @@ class RFAccelShell(cmd.Cmd):
 				options = arg.split()
 
 				if(len(options) != 1 and len(options) != 3):
-					print("Wrong argument count!")
+					print("Wrong argument count.")
+					print("count and delay are optional, but you have to specify the data type.")
 					return
 
 				datatype = options[0]
@@ -108,8 +109,9 @@ class RFAccelShell(cmd.Cmd):
 				get_gyro	= 'g' in datatype
 				get_magnet	= 'm' in datatype
 
-				if (not get_accel and not get_gyro and not get_magnet):
-					print("Please specify the data to be retrieved in a format string...")
+				if ((not get_accel) and (not get_gyro) and (not get_magnet)):
+					print("No data type requested.")
+					return
 
 				if (len(options) == 3):
 					count = int(options[1])
@@ -120,7 +122,10 @@ class RFAccelShell(cmd.Cmd):
 
 				for i in range(count):
 
-					print("#{}: {}".format(i, self.get(get_accel, get_gyro, get_magnet)))
+					data = self.get(get_accel, get_gyro, get_magnet)
+
+					print("#{}: {}".format(i, data))
+
 					time.sleep(delay)
 
 			else:
