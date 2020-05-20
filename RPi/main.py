@@ -308,7 +308,7 @@ class RFAccelShell(cmd.Cmd):
 	def get(a = True, g = True, m = False):
 		if self.connected:
 			return []
-		else
+		else:
 			return None
 
 if __name__ == "__main__":
