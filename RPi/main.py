@@ -314,7 +314,7 @@ class RFAccelShell(cmd.Cmd):
 
 			return False
 
-	def get(a = True, g = True, m = False):
+	def get(self, a = True, g = True, m = False):
 		if self.connected:
 			return []
 		else:
