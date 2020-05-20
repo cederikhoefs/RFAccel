@@ -362,8 +362,47 @@ class RFAccelShell(cmd.Cmd):
 
 			if((length == responselength) and (r_type == RFAccel.type_data) and (r_cmd == RFAccel.data_get)):
 				if DEBUG: print("Got data packet of right size.")
+				data = []
 
-				return []
+				if (a and g and m):
+					a_start = 2
+					g_start = 8
+					m_start = 14
+				elif (a and g and not m):
+					a_start = 2
+					g_start = 8
+				elif (a and not g and m):
+					a_start = 2
+					m_start = 8
+				elif (not a and g and m):
+					g_start = 2
+					m_start = 8
+				elif (a and not g and not m):
+					a_start = 2
+				elif (not a and g and not m):
+					g_start = 2
+				elif (not a and not g and m):
+					m_start = 2
+
+				if a:
+					aX = struct.unpack("<h", bytearray(response[(a_start + 0):(a_start + 2)]))[0]
+					aY = struct.unpack("<h", bytearray(response[(a_start + 2):(a_start + 4)]))[0]
+					aZ = struct.unpack("<h", bytearray(response[(a_start + 4):(a_start + 6)]))[0]
+					data += [aX, aY, aZ]
+
+				if g:
+					gX = struct.unpack("<h", bytearray(response[(g_start + 0):(g_start + 2)]))[0]
+					gY = struct.unpack("<h", bytearray(response[(g_start + 2):(g_start + 4)]))[0]
+					gZ = struct.unpack("<h", bytearray(response[(g_start + 4):(g_start + 6)]))[0]
+					data += [gX, gY, gZ]
+
+				if m:
+					mX = struct.unpack("<h", bytearray(response[(m_start + 0):(m_start + 2)]))[0]
+					mY = struct.unpack("<h", bytearray(response[(m_start + 2):(m_start + 4)]))[0]
+					mZ = struct.unpack("<h", bytearray(response[(m_start + 4):(m_start + 6)]))[0]
+					data += [mX, mY, mZ]
+
+				return data
 
 			else:
 				if DEBUG: print("Got invalid response length: {} of {} bytes".format(length, responselength))
