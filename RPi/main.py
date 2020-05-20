@@ -323,13 +323,13 @@ class RFAccelShell(cmd.Cmd):
 			responselength = RFAccel.data_get_length
 
 			if a:
-				typeflags |= get_type_acc
+				typeflags |= RFAccel.get_type_acc
 				responselength += 6			#2 bytes per axis
 			if g:
-				typeflags |= get_type_gyro
+				typeflags |= RFAccel.get_type_gyro
 				responselength += 6
 			if m:
-				typeflags |= get_type_magnet
+				typeflags |= RFAccel.get_type_magnet
 				responselenght += 6
 
 			self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_get, typeflags]))
