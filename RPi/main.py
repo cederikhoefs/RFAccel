@@ -98,6 +98,10 @@ class RFAccelShell(cmd.Cmd):
 
 				options = arg.split()
 
+				if(len(options) != 1 and len(options) != 3):
+					print("Wrong argument count!")
+					return
+
 				datatype = options[0]
 
 				get_accel	= 'a' in datatype
@@ -116,7 +120,7 @@ class RFAccelShell(cmd.Cmd):
 
 				for i in range(count):
 
-					print("#{}: {}".format(i + self.get(get_accel, get_gyro, get_magnet)))
+					print("#{}: {}".format(i, self.get(get_accel, get_gyro, get_magnet)))
 					time.sleep(delay)
 
 			else:
