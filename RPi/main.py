@@ -330,7 +330,7 @@ class RFAccelShell(cmd.Cmd):
 				responselength += 6
 			if m:
 				typeflags |= RFAccel.get_type_magnet
-				responselentgh += 6
+				responselength += 6
 
 			self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_get, typeflags]))
 			self.radio.startListening()
