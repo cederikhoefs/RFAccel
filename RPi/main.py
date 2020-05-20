@@ -236,7 +236,7 @@ class RFAccelShell(cmd.Cmd):
 			print("Connect response timed out.")
 			return False;
 
-		length = self.radio.getDynamicPayloadSize()
+		length = self.radio.getDynamicPayloadSize() #TODO: Dringend trotzdem lesen, auch wenn die Länge nicht passt, um die Daten aus dem Puffer zu entfernen...
 
 		if (length == RFAccel.data_connect_length):
 
@@ -355,6 +355,11 @@ class RFAccelShell(cmd.Cmd):
 
 			length = self.radio.getDynamicPayloadSize()
 			response = self.radio.read(length)
+
+			response = self.radio.read(length)
+
+			r_type = response[0]
+			r_cmd = response[1]
 
 			if((length == responselength) and (r_type == RFAccel.type_data) and (r_cmd == RFAccel.data_get)):
 				if DEBUG: print("Got data packet of right size.")
