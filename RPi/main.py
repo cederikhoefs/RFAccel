@@ -126,7 +126,7 @@ class RFAccelShell(cmd.Cmd):
 
 					print("#{}: {}".format(i, data))
 
-					time.sleep(delay)
+					time.sleep(delay / 1000) #in ms
 
 			else:
 				print("Not in a connection.")
