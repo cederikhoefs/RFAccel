@@ -255,7 +255,7 @@ void loop()
         			else{
 
                  		Serial.println("Corrupt or no test_channel packet.");
-                 		
+
                     	radio.setChannel(channel_enumerate);
                     	Channel = channel_enumerate;
                     	radio.openWritingPipe(pipe_out_enumerate);
@@ -308,6 +308,8 @@ void loop()
 
             	Serial.print("Count of bytes: ");
             	Serial.println(packetlength - 2);
+
+            	radio.startListening();
                 
                 break;
         	}
