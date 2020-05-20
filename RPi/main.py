@@ -16,6 +16,7 @@ class RFAccelShell(cmd.Cmd):
 	radio = None
 	connected = False
 	remotes = []
+	remote_device = None
 
 	retries = 15
 	retry_delay = 5
@@ -43,7 +44,7 @@ class RFAccelShell(cmd.Cmd):
 	def do_enumerate(self, arg):
 		'Get available devices'
 		if(self.radio):
-			if (not self.Connected):
+			if (not self.connected):
 				self.enumerate()			
 			else:
 				print("Still in connection.")
@@ -65,7 +66,7 @@ class RFAccelShell(cmd.Cmd):
 			else:
 				d_id = int(arg, 0)
 
-			if (not self.Connected):
+			if (not self.connected):
 				if (d_id in self.remotes):
 					if (self.connect(d_id)):
 						print("Connected succesfully.")
@@ -91,12 +92,14 @@ class RFAccelShell(cmd.Cmd):
 		pass
 
 	def do_get_accel(self, arg):
-		'Get remote accelerometer data'
-		pass
-
-	def do_get_gyro(self, arg):
-		'Get remote gyroscope data'
-		pass
+		'Get remote data'
+		if (self.radio):
+			if (self.connected):
+				print(arg)
+			else:
+				print("Not in a connection.")
+		else:
+			print("Not yet initialized.")
 
 
 	def do_exit(self, arg):
@@ -255,17 +258,28 @@ class RFAccelShell(cmd.Cmd):
 						self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_test_channel]))
 						print("Sent test channel command on new channel.")
 
+						self.connected = True
+						self.remote_device = d_id
+
 						return True;
 
 				else:
 					print("Received ivalid test channel command length: " + str(length) + " bytes")
+					self.connected = False
+					self.remote_device = None
+					return False
 
 			else:
 				print("Invalid connect response with correct size...")
+				self.connected = False
+				self.remote_device = None
 				return False
 
 		else:
 			print("Received invalid connect response length: " + str(length) + " bytes")
+			self.connected = False
+			self.remote_device = None
+
 			return False
 
 
