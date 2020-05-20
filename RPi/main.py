@@ -368,7 +368,7 @@ class RFAccelShell(cmd.Cmd):
 				return []
 
 			else:
-				if DEBUG: print("Got invalid get response length ")
+				if DEBUG: print("Got invalid get response length: {} instead of {} bytes".format(length, responselength))
 				return None
 
 		else:
