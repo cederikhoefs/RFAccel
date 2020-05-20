@@ -80,6 +80,8 @@ const uint8_t CHIP = enumerate_chip_MPU6050;
 const uint64_t  pipe_in = 0x6461746149;
 const uint64_t  pipe_out = 0x646174614f;
 
+const uint8_t timeout_connect = 250;
+
 
 uint8_t Channel = 0;
 bool connected = false;
@@ -121,12 +123,7 @@ void setup()
 
 void loop()
 {
-    if(Timeout >= millis()){
-        Serial.println("Timeout!!!");        
-        Timeout = 0;
-    }
-    
-    
+
     while ( radio.available() )
     {
 
@@ -180,7 +177,7 @@ void loop()
             	radio.startListening();
             	break;
             }
-            
+
             case cmd_connect:
             {
 
@@ -242,11 +239,33 @@ void loop()
             
                 radio.startListening();
                 
-                Timeout = millis() + 100;
+                Timeout = millis() + timeout_connect;
                 
                 while(!(millis() >= Timeout) && !radio.available());
                 
-                if(millis() >= Timeout){
+                if(radio.available()){
+
+                	uint8_t len = radio.getDynamicPayloadSize();
+        			radio.read( Buffer, len );
+
+        			if(Buffer[0] == type_cmd && Buffer[1] == cmd_test_channel){
+                		Serial.println("Received test_channel packet.");
+                		connected = true;
+        			}
+        			else{
+
+                 		Serial.println("Corrupt or no test_channel packet.");
+                 		
+                    	radio.setChannel(channel_enumerate);
+                    	Channel = channel_enumerate;
+                    	radio.openWritingPipe(pipe_out_enumerate);
+                    	radio.openReadingPipe(1, pipe_in_enumerate);
+
+        			}
+
+                }
+
+                else if(millis() >= Timeout){
                     Serial.println("Timeout when waiting for test_channel");
                     radio.setChannel(channel_enumerate);
                     Channel = channel_enumerate;
@@ -278,6 +297,7 @@ void loop()
             			packetlength += 6;
             		if(Type & get_type_magnet)
             			packetlength += 6;
+            		Serial.println("Data requested...");
             	}
 
 

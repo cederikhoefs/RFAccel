@@ -7,6 +7,8 @@ from RF24 import *
 import RFAccel
 import RPi.GPIO as GPIO
 
+DEBUG = True
+
 millis = lambda: int(round(time.time() * 1000))
 
 class RFAccelShell(cmd.Cmd): 
@@ -22,7 +24,7 @@ class RFAccelShell(cmd.Cmd):
 	retry_delay = 5
 
 	enumerate_timeout = 1000
-	connect_timeout = 100
+	connect_timeout = 250
 
 	pipe_in = None
 	pipe_out = None
@@ -198,7 +200,7 @@ class RFAccelShell(cmd.Cmd):
 						r_type = response[0]
 						r_cmd = response[1]
 						r_id = struct.unpack("<I", bytearray(response[2:6]))[0]
-						r_chip = RFAccel.enumerate_chip_names[response[6]]
+						printr_chip = RFAccel.enumerate_chip_names[response[6]]
 						r_cap = response[7]
 
 						if ((response[0] == RFAccel.type_data) and (response[1] == RFAccel.data_enumerate)):
@@ -206,10 +208,10 @@ class RFAccelShell(cmd.Cmd):
 							print("Found device with ID " + hex(r_id) + " with chip " + r_chip + " and capatibilities " + bin(r_cap))
 
 						else:
-							print("Invalid enumeration response with correct size...")
+							if DEBUG: print("Invalid enumeration response with correct size...")
 
 					else:
-						print("Received invalid enumeration response length: " + str(length) + " bytes")
+						if DEBUG: print("Received invalid enumeration response length: " + str(length) + " bytes")
 
 				elif (millis() - wait_start) > self.enumerate_timeout:
 					timeout = True
@@ -325,12 +327,15 @@ class RFAccelShell(cmd.Cmd):
 			if a:
 				typeflags |= RFAccel.get_type_acc
 				responselength += 6			#2 bytes per axis
+				if DEBUG: print("Get accelerometer.")
 			if g:
 				typeflags |= RFAccel.get_type_gyro
 				responselength += 6
+				if DEBUG: print("Get gyroscope.")
 			if m:
 				typeflags |= RFAccel.get_type_magnet
 				responselength += 6
+				if DEBUG: print("Get compass.")
 
 			self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_get, typeflags]))
 			self.radio.startListening()
@@ -345,17 +350,19 @@ class RFAccelShell(cmd.Cmd):
 
 			if (timeout):
 
-				print("Get command response timed out.")
+				if DEBUG: print("Get command response timed out.")
 				return None
 
 			length = self.radio.getDynamicPayloadSize()
+			response = self.radio.read(length)
 
-			if(length == responselength):
-				print("Got data packet of right size.")
+			if((length == responselength) and (r_type == RFAccel.type_data) and (r_cmd == RFAccel.data_get)):
+				if DEBUG: print("Got data packet of right size.")
+
 				return []
 
 			else:
-				print("Got invalid get response length ")
+				if DEBUG: print("Got invalid get response length ")
 				return None
 
 		else:
