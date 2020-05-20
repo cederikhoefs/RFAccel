@@ -357,8 +357,6 @@ class RFAccelShell(cmd.Cmd):
 			length = self.radio.getDynamicPayloadSize()
 			response = self.radio.read(length)
 
-			response = self.radio.read(length)
-
 			r_type = response[0]
 			r_cmd = response[1]
 
@@ -368,7 +366,7 @@ class RFAccelShell(cmd.Cmd):
 				return []
 
 			else:
-				if DEBUG: print("Got invalid get response length: {} instead of {} bytes".format(length, responselength))
+				if DEBUG: print("Got invalid response length: {} of {} bytes".format(length, responselength))
 				return None
 
 		else:
