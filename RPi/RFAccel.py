@@ -17,10 +17,9 @@ cmd_set_acc_rate = 0x02
 cmd_set_gyr_rate = 0x03
 cmd_set_acc_range = 0x04
 cmd_set_gyr_range = 0x05
-cmd_get_acc = 0x06
-cmd_get_gyr = 0x07
-cmd_stream_accel = 0x08
-cmd_stream_gyro = 0x09
+cmd_get = 0x06
+cmd_stream_accel = 0x07
+cmd_stream_gyro = 0x08
 
 data_enumerate = 0x0E
 data_enumerate_length = 8			#change this when adding parameters to enumeration response packet
@@ -39,3 +38,12 @@ connect_timestamp_ms = 0x01
 connect_timestamp_us = 0x02
 
 cmd_test_length = 2
+
+cmd_get_length = 3
+
+get_type_acc	= 1 << 1		#accelerometer
+get_type_gyro	= 1 << 2		#gyroscope
+get_type_magnet	= 1 << 3		#magnetometer
+
+data_get = 0x0D
+data_get_length = 2				#considering only the command and flags, not the variable data length

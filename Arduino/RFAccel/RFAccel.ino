@@ -30,10 +30,9 @@ const uint8_t cmd_set_acc_rate = 0x02;
 const uint8_t cmd_set_gyr_rate = 0x03;
 const uint8_t cmd_set_acc_range = 0x04;
 const uint8_t cmd_set_gyr_range = 0x05;
-const uint8_t cmd_get_acc = 0x06;
-const uint8_t cmd_get_gyr = 0x07;
-const uint8_t cmd_stream_accel = 0x08;
-const uint8_t cmd_stream_gyro = 0x09;
+const uint8_t cmd_get = 0x06;
+const uint8_t cmd_stream_accel = 0x07;
+const uint8_t cmd_stream_gyro = 0x08;
 
 const uint8_t data_enumerate = 0x0E;
 const uint8_t data_enumerate_length = 8;
@@ -57,6 +56,14 @@ const uint8_t connect_timestamp_us = 0x02;
 
 const uint8_t cmd_test_channel_length = 2;
 
+const uint8_t cmd_get_length = 3;
+
+const uint8_t data_get = 0x0D;
+
+const uint8_t get_type_acc	= (1 << 1);
+const uint8_t get_type_gyro	= (1 << 2);
+const uint8_t get_type_magnet = (1 << 3);
+
 const uint8_t info_accel_resolutions_MPU6050[] = {16};
 const uint16_t  info_accel_ranges[] = {2, 4, 8, 16};
 const uint16_t  info_accel_max_data_rate = 1000;
@@ -78,7 +85,7 @@ uint8_t Channel = 0;
 bool connected = false;
 
 uint8_t TimestampFormat = 0;
-
+uint8_t Type = 0;
 
 uint8_t Buffer[32];
 
@@ -154,6 +161,7 @@ void loop()
             switch(Buffer[1]){
     
             case cmd_enumerate:
+            {
             		 
                 Serial.println("Enumeration requested!");
             		
@@ -171,8 +179,10 @@ void loop()
             	radio.write(Buffer, data_enumerate_length);
             	radio.startListening();
             	break;
-
+            }
+            
             case cmd_connect:
+            {
 
             	radio.stopListening();
 
@@ -196,6 +206,7 @@ void loop()
             		break;
             	default:
             		Serial.println("Invalid");
+            		break;
 
             	}
 
@@ -243,10 +254,43 @@ void loop()
                     radio.openReadingPipe(1, pipe_in_enumerate);
                     continue;
                     
-                }
+                }                
+                break;
+            }
+
+            case cmd_get:
+            {
+
+            	radio.stopListening();
+
+            	Type = Buffer[2];
+
+            	uint8_t packetlength = 2;
+
+            	if(Type == 0x00){
+            		Serial.println("Get command without any set dataflag");
+            		break;
+            	}
+            	else{
+            		if(Type & get_type_acc)
+            			packetlength += 6;
+            		if(Type & get_type_gyro)
+            			packetlength += 6;
+            		if(Type & get_type_magnet)
+            			packetlength += 6;
+            	}
+
+
+            	Buffer[0] = type_data;
+            	Buffer[1] = data_get;
+            
+            	radio.write(Buffer, packetlength);
+
+            	Serial.print("Count of bytes: ");
+            	Serial.println(packetlength - 2);
                 
                 break;
-                
+        	}
                 
             default:
                 break;

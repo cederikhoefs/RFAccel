@@ -273,7 +273,7 @@ class RFAccelShell(cmd.Cmd):
 					self.radio.openReadingPipe(1, RFAccel.pipe_in_enumerate)
 
 					print("No test packet on given channel, falling back to enumerate channel.")
-					return False;
+					return False
 
 				length = self.radio.getDynamicPayloadSize()
 
@@ -316,7 +316,48 @@ class RFAccelShell(cmd.Cmd):
 
 	def get(self, a = True, g = True, m = False):
 		if self.connected:
-			return []
+			
+			self.radio.stopListening()
+
+			typeflags = 0x00
+			responselength = RFAccel.data_get_length
+
+			if a:
+				typeflags |= get_type_acc
+				responselength += 6			#2 bytes per axis
+			if g:
+				typeflags |= get_type_gyro
+				responselength += 6
+			if m:
+				typeflags |= get_type_magnet
+				responselenght += 6
+
+			self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_get, typeflags]))
+			self.radio.startListening()
+
+			wait_start = millis()
+
+			timeout = False
+
+			while ((not timeout) and (not self.radio.available())):
+				if (millis() - wait_start) > self.connect_timeout:
+					timeout = True
+
+			if (timeout):
+
+				print("Get command response timed out.")
+				return None
+
+			length = self.radio.getDynamicPayloadSize()
+
+			if(length == responselength):
+				print("Got data packet of right size.")
+				return []
+
+			else:
+				print("Got invalid get response length ")
+				return None
+
 		else:
 			return None
 
