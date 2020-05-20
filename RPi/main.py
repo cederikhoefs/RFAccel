@@ -388,19 +388,19 @@ class RFAccelShell(cmd.Cmd):
 					aX = struct.unpack("<h", bytearray(response[(a_start + 0):(a_start + 2)]))[0]
 					aY = struct.unpack("<h", bytearray(response[(a_start + 2):(a_start + 4)]))[0]
 					aZ = struct.unpack("<h", bytearray(response[(a_start + 4):(a_start + 6)]))[0]
-					data += [aX, aY, aZ]
+					data.append([aX, aY, aZ])
 
 				if g:
 					gX = struct.unpack("<h", bytearray(response[(g_start + 0):(g_start + 2)]))[0]
 					gY = struct.unpack("<h", bytearray(response[(g_start + 2):(g_start + 4)]))[0]
 					gZ = struct.unpack("<h", bytearray(response[(g_start + 4):(g_start + 6)]))[0]
-					data += [gX, gY, gZ]
+					data.append([gX, gY, gZ])
 
 				if m:
 					mX = struct.unpack("<h", bytearray(response[(m_start + 0):(m_start + 2)]))[0]
 					mY = struct.unpack("<h", bytearray(response[(m_start + 2):(m_start + 4)]))[0]
 					mZ = struct.unpack("<h", bytearray(response[(m_start + 4):(m_start + 6)]))[0]
-					data += [mX, mY, mZ]
+					data.append([mX, mY, mZ])
 
 				return data
 
