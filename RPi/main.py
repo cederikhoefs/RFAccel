@@ -110,7 +110,7 @@ class RFAccelShell(cmd.Cmd):
 				if (len(options) == 3):
 					count = int(options[1])
 					delay = int(options[2]) # in ms
-				else
+				else:
 					count = 1
 					delay = 0
 
