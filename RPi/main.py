@@ -91,11 +91,34 @@ class RFAccelShell(cmd.Cmd):
 		'Calibrate the stationary remote device'
 		pass
 
-	def do_get_accel(self, arg):
+	def do_get(self, arg):
 		'Get remote data'
 		if (self.radio):
 			if (self.connected):
-				print(arg)
+
+				options = arg.split()
+
+				datatype = options[0]
+
+				get_accel	= 'a' in datatype
+				get_gyro	= 'g' in datatype
+				get_magnet	= 'm' in datatype
+
+				if (not get_accel and not get_gyro and not get_magnet):
+					print("Please specify the data to be retrieved in a format string...")
+
+				if (len(options) == 3):
+					count = int(options[1])
+					delay = int(options[2]) # in ms
+				else
+					count = 1
+					delay = 0
+
+				for i in range(count):
+
+					print("#{}: {}".format(i + self.get(get_accel, get_gyro, get_magnet)))
+					time.sleep(delay)
+
 			else:
 				print("Not in a connection.")
 		else:
@@ -282,6 +305,11 @@ class RFAccelShell(cmd.Cmd):
 
 			return False
 
+	def get(a = True, g = True, m = False):
+		if self.connected:
+			return []
+		else
+			return None
 
 if __name__ == "__main__":
 	RFAccelShell().cmdloop()
