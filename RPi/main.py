@@ -140,10 +140,10 @@ class RFAccelShell(cmd.Cmd):
 	def do_exit(self, arg):
 		'Exits the shell'
 		print("Closing rfaccel")
-		self.close()
+		self.end()
 		return True;
 
-	def close(self):
+	def end(self):
 		pass
 
 	def init(self):
@@ -412,4 +412,9 @@ class RFAccelShell(cmd.Cmd):
 			return None
 
 if __name__ == "__main__":
-	RFAccelShell().cmdloop()
+	rfshell = RFAccelShell()
+	try:
+		rfshell.cmdloop()
+	except KeyboardInterrupt:
+		rfshell.end()
+		print("rfaccel was ended by CTRL+C")
