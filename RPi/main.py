@@ -91,7 +91,7 @@ class RFAccelShell(cmd.Cmd):
 				possible_ids.append(hex(c_id))
 		return possible_ids
 
-	def do_disconnect(self):
+	def do_disconnect(self, arg):
 		'Disconnect from connected device'
 		if (self.radio):
 			if(self.connected):
