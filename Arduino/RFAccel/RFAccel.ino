@@ -26,13 +26,10 @@ const uint8_t cmd_test_channel = 0x0B;
 const uint8_t cmd_disconnect = 0x0F;        
 const uint8_t cmd_close_stream = 0x0C;    
 
-const uint8_t cmd_set_acc_rate = 0x02;
-const uint8_t cmd_set_gyr_rate = 0x03;
-const uint8_t cmd_set_acc_range = 0x04;
-const uint8_t cmd_set_gyr_range = 0x05;
-const uint8_t cmd_get = 0x06;
-const uint8_t cmd_stream_accel = 0x07;
-const uint8_t cmd_stream_gyro = 0x08;
+const uint8_t cmd_set_rate = 0x02;
+const uint8_t cmd_set_range = 0x03;
+const uint8_t cmd_get = 0x04;
+const uint8_t cmd_stream = 0x05;
 
 const uint8_t data_enumerate = 0x0E;
 const uint8_t data_enumerate_length = 8;
@@ -42,10 +39,10 @@ const uint8_t enumerate_chip_MPU6050 = 1; //MPU6050; LI3DH; LSM303DLHC; etc...
 const uint8_t enumerate_chip_LIS3DH = 2;
 const uint8_t enumerate_LSM303DHC = 3;
 
-const uint8_t enumerate_cap_rf = (1 << 0);
-const uint8_t enumerate_cap_acc = (1 << 1);
-const uint8_t enumerate_cap_gyro = (1 << 2);
-const uint8_t enumerate_cap_magnet = (1 << 3);
+const uint8_t feature_rf = (1 << 0);
+const uint8_t feature_acc = (1 << 1);
+const uint8_t feature_gyro = (1 << 2);
+const uint8_t feature_magnet = (1 << 3);
 
 const uint8_t data_connect = 0x0C;
 const uint8_t data_connect_length = 12;
@@ -59,10 +56,6 @@ const uint8_t cmd_test_channel_length = 2;
 const uint8_t cmd_get_length = 3;
 
 const uint8_t data_get = 0x0D;
-
-const uint8_t get_type_acc	= (1 << 1);
-const uint8_t get_type_gyro	= (1 << 2);
-const uint8_t get_type_magnet = (1 << 3);
 
 const uint8_t info_accel_resolutions_MPU6050[] = {16};
 const uint16_t  info_accel_ranges[] = {2, 4, 8, 16};
@@ -291,11 +284,11 @@ void loop()
             		break;
             	}
             	else{
-            		if(Type & get_type_acc)
+            		if(Type & feature_acc)
             			packetlength += 6;
-            		if(Type & get_type_gyro)
+            		if(Type & feature_gyro)
             			packetlength += 6;
-            		if(Type & get_type_magnet)
+            		if(Type & feature_magnet)
             			packetlength += 6;
             		Serial.println("Data requested...");
             	}

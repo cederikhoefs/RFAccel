@@ -380,15 +380,15 @@ class RFAccelShell(cmd.Cmd):
 			responselength = RFAccel.data_get_length
 
 			if a:
-				typeflags |= RFAccel.get_type_acc
+				typeflags |= RFAccel.feature_acc
 				responselength += 6			#2 bytes per axis
 				if DEBUG: print("Get accelerometer.")
 			if g:
-				typeflags |= RFAccel.get_type_gyro
+				typeflags |= RFAccel.feature_gyro
 				responselength += 6
 				if DEBUG: print("Get gyroscope.")
 			if m:
-				typeflags |= RFAccel.get_type_magnet
+				typeflags |= RFAccel.feature_magnet
 				responselength += 6
 				if DEBUG: print("Get compass.")
 
