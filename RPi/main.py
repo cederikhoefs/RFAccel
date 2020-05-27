@@ -354,7 +354,7 @@ class RFAccelShell(cmd.Cmd):
 				r_type = response[0]
 				r_cmd = response[1]
 
-				if(r_type == RFAccel.type_cmd and r_cmd = RFAccel.cmd_disconnect):
+				if((r_type == RFAccel.type_cmd) and (r_cmd == RFAccel.cmd_disconnect)):
 					print("Disconnected.")
 					self.connected = False
 					return True
