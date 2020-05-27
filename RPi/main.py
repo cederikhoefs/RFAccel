@@ -324,7 +324,7 @@ class RFAccelShell(cmd.Cmd):
 			self.connected = False
 			self.remote_device = None
 
-^			return False
+			return False
 
 	def disconnect(self):
 		if self.connected:
