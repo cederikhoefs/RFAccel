@@ -37,6 +37,8 @@ connect_timestamp_none = 0x00
 connect_timestamp_ms = 0x01
 connect_timestamp_us = 0x02
 
+cmd_disconnect_length = 2
+
 cmd_test_length = 2
 
 cmd_get_length = 3

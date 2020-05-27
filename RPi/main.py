@@ -13,6 +13,7 @@ DEBUG = True
 millis = lambda: int(round(time.time() * 1000))
 
 class RFAccelShell(cmd.Cmd): 
+	'Hybrid between the protocol and a rudimentary terminal to test the functionality'
 
 	intro = "rfaccel 0.1 shell.   Type help or ? to list commands.\n"
 	prompt = "(rfaccel)"
@@ -89,6 +90,16 @@ class RFAccelShell(cmd.Cmd):
 			if(hex(c_id).startswith(text)):
 				possible_ids.append(hex(c_id))
 		return possible_ids
+
+	def do_disconnect(self):
+		'Disconnect from connected device'
+		if (self.radio):
+			if(self.connected):
+				self.disconnect()
+			else:
+				print("Not yet connected")
+		else:
+			print("Not yet initialized")
 
 	def do_calibrate(self, arg):
 		'Calibrate the stationary remote device'
@@ -194,10 +205,10 @@ class RFAccelShell(cmd.Cmd):
 				if (self.radio.available()):
 
 					length = self.radio.getDynamicPayloadSize()
+					response = self.radio.read(length)
 
 					if (length == RFAccel.data_enumerate_length):
 
-						response = self.radio.read(length)
 						r_type = response[0]
 						r_cmd = response[1]
 						r_id = struct.unpack("<I", bytearray(response[2:6]))[0]
@@ -229,7 +240,7 @@ class RFAccelShell(cmd.Cmd):
 		timeout = False
 
 		while ((not timeout) and (not self.radio.available())):
-			if (millis() - wait_start) > self.connect_timeout:
+ 			if (millis() - wait_start) > self.connect_timeout:
 				timeout = True
 
 		if (timeout):
@@ -238,10 +249,9 @@ class RFAccelShell(cmd.Cmd):
 			return False;
 
 		length = self.radio.getDynamicPayloadSize() #TODO: Dringend trotzdem lesen, auch wenn die Länge nicht passt, um die Daten aus dem Puffer zu entfernen...
+		response = self.radio.read(length)
 
 		if (length == RFAccel.data_connect_length):
-
-			response = self.radio.read(length)
 
 			r_type = response[0]
 			r_cmd = response[1]
@@ -279,10 +289,9 @@ class RFAccelShell(cmd.Cmd):
 					return False
 
 				length = self.radio.getDynamicPayloadSize()
+				response = self.radio.read(length)
 
 				if (length == RFAccel.cmd_test_length):
-
-					response = self.radio.read(length)
 
 					r_type = response[0]
 					r_cmd = response[1]
@@ -315,7 +324,46 @@ class RFAccelShell(cmd.Cmd):
 			self.connected = False
 			self.remote_device = None
 
-			return False
+^			return False
+
+	def disconnect(self):
+		if self.connected:
+			
+			self.radio.stopListening()
+			self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_disconnect]))
+			self.radio.startListening()
+			
+			wait_start = millis()
+
+			timeout = False
+
+			while ((not timeout) and (not self.radio.available())):
+ 				if (millis() - wait_start) > self.connect_timeout:
+					timeout = True
+
+			if (timeout):
+
+				print("Disconnect response timed out.")
+				return False;
+
+			length = self.radio.getDynamicPayloadSize()
+			response = self.radio.read(length)
+
+			if (length == RFAccel.cmd_disconnect_length):
+
+				r_type = response[0]
+				r_cmd = response[1]
+
+				if(r_type == RFAccel.type_cmd and r_cmd = RFAccel.cmd_disconnect):
+					print("Disconnected.")
+					self.connected = False
+					return True
+				else:
+					return False
+
+			else:
+				print("Disconnect response packet of wrong size.")
+				return False
 
 	def get(self, a = True, g = True, m = False):
 		if self.connected:
