@@ -68,7 +68,7 @@ class RFAccelShell(cmd.Cmd):
 					print("Please specify a device to connect to.")
 					return
 			else:
-				d_id = int(arg, 0)
+				d_id = int(arg[0], 0)
 
 			if (not self.connected):
 				if (d_id in self.remotes):
