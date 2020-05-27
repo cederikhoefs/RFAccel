@@ -22,10 +22,10 @@ data_enumerate = 0x0E
 data_enumerate_length = 8			#change this when adding parameters to enumeration response packet
 	
 enumerate_chip_names	= {0: "Unknown", 1: "MPU6050", 2:"LIS3DH", 3:"LSM303DLHC"}
-feature_type_rf		= 1 << 0
-feature_type_acc	= 1 << 1		#accelerometer
-feature_type_gyro	= 1 << 2		#gyroscope
-feature_type_magnet	= 1 << 3		#magnetometer
+feature_rf	= 1 << 0
+feature_acc	= 1 << 1		#accelerometer
+feature_gyro	= 1 << 2		#gyroscope
+feature_magnet	= 1 << 3		#magnetometer
 
 data_connect = 0x0C
 data_connect_length = 12
