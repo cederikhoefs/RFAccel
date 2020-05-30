@@ -69,7 +69,7 @@ class RFAccelShell(cmd.Cmd):
 					return
 			else:
 				try:
-					d_id = int(arg[0], 0)
+					d_id = int(arg.split()[0], 0)
 				except ValueError:
 					print("Invalid integer parameter")
 
