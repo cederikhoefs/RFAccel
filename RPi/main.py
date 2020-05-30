@@ -158,7 +158,7 @@ class RFAccelShell(cmd.Cmd):
 		'Exits the shell'
 		print("Closing rfaccel")
 		self.end()
-		return True;
+		return True
 
 	def end(self):
 		pass
@@ -169,7 +169,7 @@ class RFAccelShell(cmd.Cmd):
 			self.radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ)
 
 			#if(not self.radio.isChipConnected()): #Does not work due do bad pyRF24 maintenance
-			#	return False;
+			#	return False
 
 			self.radio.begin()
 			self.radio.setAutoAck(True)
@@ -179,11 +179,11 @@ class RFAccelShell(cmd.Cmd):
 			self.radio.setDataRate(RF24_2MBPS)
 			self.radio.setPALevel(RF24_PA_MAX)
 
-			self.Connected = False;
+			self.Connected = False
 
-			return True;
+			return True
 		else:
-			return False;
+			return False
 	
 
 	def enumerate(self):
@@ -252,7 +252,7 @@ class RFAccelShell(cmd.Cmd):
 		if (timeout):
 
 			print("Connect response timed out.")
-			return False;
+			return False
 
 		length = self.radio.getDynamicPayloadSize() #TODO: Dringend trotzdem lesen, auch wenn die Länge nicht passt, um die Daten aus dem Puffer zu entfernen...
 		response = self.radio.read(length)
@@ -270,7 +270,7 @@ class RFAccelShell(cmd.Cmd):
 
 			if ((r_type == RFAccel.type_data) and (r_cmd == RFAccel.data_connect)):
 				
-				print("Connecting to device " + hex(d_id) + " on channel " + str(channel) + "; I/" + hex(self.pipe_in) +"; O/" + hex(self.pipe_out))
+				print("Connecting to device " + hex(d_id) + " on channel " + str(channel) + " I/" + hex(self.pipe_in) +"; O/" + hex(self.pipe_out))
 
 				self.radio.setChannel(channel)
 
@@ -311,7 +311,7 @@ class RFAccelShell(cmd.Cmd):
 						self.connected = True
 						self.remote_device = d_id
 
-						return True;
+						return True
 
 				else:
 					print("Received ivalid test channel command length: " + str(length) + " bytes")
@@ -350,7 +350,7 @@ class RFAccelShell(cmd.Cmd):
 			if (timeout):
 
 				print("Disconnect response timed out.")
-				return False;
+				return False
 
 			length = self.radio.getDynamicPayloadSize()
 			response = self.radio.read(length)
