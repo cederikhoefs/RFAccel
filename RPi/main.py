@@ -107,7 +107,7 @@ class RFAccelShell(cmd.Cmd):
 		else:
 			print("Not yet initialized")
 
-	def do_force_end(self.arg):
+	def do_force_end(self, arg):
 		if (self.radio):
 			if(self.connected):
 				if(self.disconnect()):
