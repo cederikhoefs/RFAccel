@@ -67,7 +67,7 @@ const uint16_t  info_gyro_max_data_rate = 8000;
 
 
 const uint32_t ID = 0x2B4D4B31;
-const uint8_t CAP = enumerate_cap_rf | enumerate_cap_acc | enumerate_cap_gyro;
+const uint8_t CAP = feature_rf | feature_acc | feature_gyro;
 const uint8_t CHIP = enumerate_chip_MPU6050;
 
 const uint64_t  pipe_in = 0x6461746149;
@@ -321,4 +321,3 @@ void loop()
        
     }
 }
-
