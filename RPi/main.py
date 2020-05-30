@@ -98,7 +98,24 @@ class RFAccelShell(cmd.Cmd):
 		'Disconnect from connected device'
 		if (self.radio):
 			if(self.connected):
-				self.disconnect()
+				if(self.disconnect()):
+					print("Disconnected.")
+				else:
+					print("Disconnect failed. Use 'force_end' to end the connection locally.")
+			else:
+				print("Not yet connected")
+		else:
+			print("Not yet initialized")
+
+	def do_force_end(self.arg):
+		if (self.radio):
+			if(self.connected):
+				if(self.disconnect()):
+					print("Disconnected.")
+				else:
+					print("Disconnect failed for remote, it may have hung up")
+					print("Ready to connect again")
+					self.connected = False
 			else:
 				print("Not yet connected")
 		else:
@@ -179,7 +196,7 @@ class RFAccelShell(cmd.Cmd):
 			self.radio.setDataRate(RF24_2MBPS)
 			self.radio.setPALevel(RF24_PA_MAX)
 
-			self.Connected = False
+			self.connected = False
 
 			return True
 		else:
@@ -188,7 +205,7 @@ class RFAccelShell(cmd.Cmd):
 
 	def enumerate(self):
 
-		if (not self.Connected):
+		if (not self.connected):
 
 			self.radio.stopListening()
 			self.radio.setChannel(RFAccel.channel_enumerate)
@@ -361,7 +378,6 @@ class RFAccelShell(cmd.Cmd):
 				r_cmd = response[1]
 
 				if((r_type == RFAccel.type_cmd) and (r_cmd == RFAccel.cmd_disconnect)):
-					print("Disconnected.")
 					self.connected = False
 					return True
 				else:
