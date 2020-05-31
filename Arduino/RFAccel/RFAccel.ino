@@ -22,7 +22,7 @@ const uint8_t type_stream = 0x02;
 
 const uint8_t cmd_enumerate = 0x0E;       
 const uint8_t cmd_connect = 0x0A;  
-const uint8_t cmd_test_channel = 0x0B;
+const uint8_t cmd_ping = 0x0B;
 const uint8_t cmd_disconnect = 0x0F;        
 const uint8_t cmd_close_stream = 0x0C;    
 
@@ -51,7 +51,8 @@ const uint8_t connect_timestamp_none = 0x00;
 const uint8_t connect_timestamp_ms = 0x01;
 const uint8_t connect_timestamp_us = 0x02;
 
-const uint8_t cmd_test_channel_length = 2;
+const uint8_t cmd_disconnect_length = 2;
+const uint8_t cmd_ping_length = 2;
 
 const uint8_t cmd_get_length = 3;
 
@@ -86,6 +87,21 @@ uint8_t Buffer[32];
 
 uint32_t Timeout = 0;
 
+void to_enumerate(){
+
+	Channel = channel_enumerate;
+    radio.setChannel(channel_enumerate);
+    radio.openWritingPipe(pipe_out_enumerate);
+    radio.openReadingPipe(1, pipe_in_enumerate);
+
+    radio.startListening();
+
+	#ifdef VERBOSE
+	Serial.println("(Fallback) to enumerate channel.");
+	#endif
+
+}
+
 void setup()
 {
 
@@ -102,16 +118,10 @@ void setup()
     radio.enableDynamicPayloads();
     radio.setRetries(radio_retry_delay, radio_retries);
 
-    radio.setChannel(channel_enumerate);
-    radio.openWritingPipe(pipe_out_enumerate);
-    radio.openReadingPipe(1, pipe_in_enumerate);
-      
-    radio.printDetails();
-		
-    radio.startListening();
+	to_enumerate();
 
-    Channel = channel_enumerate;
-    	
+    radio.printDetails();
+		    	
 }
 
 void loop()
@@ -225,9 +235,9 @@ void loop()
 
     
             	Buffer[0] = type_cmd;
-            	Buffer[1] = cmd_test_channel;
+            	Buffer[1] = cmd_ping;
             
-            	radio.write(Buffer, cmd_test_channel_length);
+            	radio.write(Buffer, cmd_ping_length);
             	Serial.println("Sent test_channel packet.");
             
                 radio.startListening();
@@ -241,7 +251,7 @@ void loop()
                 	uint8_t len = radio.getDynamicPayloadSize();
         			radio.read( Buffer, len );
 
-        			if(Buffer[0] == type_cmd && Buffer[1] == cmd_test_channel){
+        			if(Buffer[0] == type_cmd && Buffer[1] == cmd_ping){
                 		Serial.println("Received test_channel packet.");
                 		connected = true;
         			}
@@ -259,20 +269,31 @@ void loop()
                 }
 
                 else if(millis() >= Timeout){
-                    Serial.println("Timeout when waiting for test_channel");
-                    radio.setChannel(channel_enumerate);
-                    Channel = channel_enumerate;
-                    radio.openWritingPipe(pipe_out_enumerate);
-                    radio.openReadingPipe(1, pipe_in_enumerate);
+                    Serial.println("Timeout when waiting for ping");
+					to_enumerate();
                     continue;
                     
                 }                
                 break;
             }
+			case cmd_disconnect:
+			{
+				radio.stopListening();
+				Serial.println("Disconnecting.");
+				connected = false;
 
+				Buffer[0] = type_cmd;
+				Buffer[1] = cmd_disconnect;
+
+				radio.write(Buffer, cmd_disconnect_length);
+
+				to_enumerate();
+				
+				break;
+
+			}
             case cmd_get:
             {
-
             	radio.stopListening();
 
             	Type = Buffer[2];

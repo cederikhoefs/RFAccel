@@ -13,7 +13,7 @@ DEBUG = True
 millis = lambda: int(round(time.time() * 1000))
 
 class RFAccelShell(cmd.Cmd): 
-	'Hybrid between the protocol and a rudimentary terminal to test the functionality'
+	'Hybrid between the protocol and a rudimentary terminal to ping the functionality'
 
 	intro = "rfaccel 0.1 shell.   Type help or ? to list commands.\n"
 	prompt = "(rfaccel)"
@@ -308,22 +308,22 @@ class RFAccelShell(cmd.Cmd):
 					self.radio.openWritingPipe(RFAccel.pipe_out_enumerate)
 					self.radio.openReadingPipe(1, RFAccel.pipe_in_enumerate)
 
-					print("No test packet on given channel, falling back to enumerate channel.")
+					print("No ping packet on given channel, falling back to enumerate channel.")
 					return False
 
 				length = self.radio.getDynamicPayloadSize()
 				response = self.radio.read(length)
 
-				if (length == RFAccel.cmd_test_length):
+				if (length == RFAccel.cmd_ping_length):
 
 					r_type = response[0]
 					r_cmd = response[1]
 
-					if((r_type == RFAccel.type_cmd) and (r_cmd == RFAccel.cmd_test_channel)):
-						print("Received test channel command on new channel.")
+					if((r_type == RFAccel.type_cmd) and (r_cmd == RFAccel.cmd_ping)):
+						print("Received ping command on new channel.")
 						self.radio.stopListening()
-						self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_test_channel]))
-						print("Sent test channel command on new channel.")
+						self.radio.write(bytearray([RFAccel.type_cmd, RFAccel.cmd_ping]))
+						print("Sent ping command on new channel.")
 
 						self.connected = True
 						self.remote_device = d_id
@@ -331,7 +331,7 @@ class RFAccelShell(cmd.Cmd):
 						return True
 
 				else:
-					print("Received ivalid test channel command length: " + str(length) + " bytes")
+					print("Received ivalid ping command length: " + str(length) + " bytes")
 					self.connected = False
 					self.remote_device = None
 					return False
