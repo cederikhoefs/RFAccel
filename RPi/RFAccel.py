@@ -36,7 +36,7 @@ connect_timestamp_us = 0x02
 
 cmd_disconnect_length = 2
 
-cmd_test_length = 2
+cmd_ping_length = 2
 
 cmd_get_length = 3
 
